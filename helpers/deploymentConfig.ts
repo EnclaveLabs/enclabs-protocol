@@ -1,4 +1,4 @@
-import { contracts as governanceArbitrumOne } from "@venusprotocol/governance-contracts/deployments/arbitrumone.json";
+import { contracts as governanceArbitrumOne } from "../deployments/arbitrumone.json";
 import { contracts as governanceArbitrumSepolia } from "@venusprotocol/governance-contracts/deployments/arbitrumsepolia.json";
 import { contracts as governanceBscMainnet } from "@venusprotocol/governance-contracts/deployments/bscmainnet.json";
 import { contracts as governanceBscTestnet } from "@venusprotocol/governance-contracts/deployments/bsctestnet.json";
@@ -242,9 +242,12 @@ export const preconfiguredAddresses = {
   },
   arbitrumone: {
     VTreasury: venusProtocolArbitrumOne.VTreasuryV8.address,
-    NormalTimelock: ARBITRUM_ONE_MULTISIG,
-    FastTrackTimelock: ARBITRUM_ONE_MULTISIG,
-    CriticalTimelock: ARBITRUM_ONE_MULTISIG,
+    // NormalTimelock: ARBITRUM_ONE_MULTISIG,
+    // FastTrackTimelock: ARBITRUM_ONE_MULTISIG,
+    // CriticalTimelock: ARBITRUM_ONE_MULTISIG,
+    NormalTimelock: governanceArbitrumOne.NormalTimelock.address,
+    FastTrackTimelock: governanceArbitrumOne.FastTrackTimelock.address,
+    CriticalTimelock: governanceArbitrumOne.CriticalTimelock.address,
     AccessControlManager: governanceArbitrumOne.AccessControlManager.address,
   },
   zksyncsepolia: {
