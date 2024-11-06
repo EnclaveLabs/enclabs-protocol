@@ -104,6 +104,7 @@ export type BlocksPerYear = {
 
 export const blocksPerYear: BlocksPerYear = {
   arbitrumone: 0, // for time based contracts
+  isTimeBased: 0, // for time based contracts
 };
 
 
