@@ -10,7 +10,7 @@
     "ComptrollerImpl": "0x4b256a7836415e09DabA40541eE78602Bc6B24bF",
     "Comptroller_Core": "0x317c1A5739F39046E20b08ac9BeEa3f10fD43326",
     "Comptroller_Liquid Staked ETH": "0x52bAB1aF7Ff770551BD05b9FC2329a0Bf5E23F16",
-    "DefaultProxyAdmin": "0xF6fF3e9459227f0cDE8B102b90bE25960317b216",
+    "DefaultProxyAdmin": "0xfbB9b8353aDaB2CFCb60D7d52645D95Ce2Ba30Db",
     "JumpRateModelV2_base0bps_slope1500bps_jump25000bps_kink4500bps": "0x390D1C248217615D79f74f2453D682906Bd2dD20",
     "JumpRateModelV2_base0bps_slope350bps_jump25000bps_kink8000bps": "0x305f960b00594200ed80373B61b38e669651469E",
     "JumpRateModelV2_base0bps_slope350bps_jump8000bps_kink8000bps": "0x5123645b47f0c526Bf1e772CC68319C6d9C0d156",

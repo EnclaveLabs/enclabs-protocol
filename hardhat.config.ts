@@ -414,18 +414,18 @@ const config: HardhatUserConfig = {
   },
   external: {
     contracts: [
-      {
-        artifacts: "node_modules/@venusprotocol/oracle/artifacts",
-      },
-      {
-        artifacts: "node_modules/@venusprotocol/venus-protocol/artifacts",
-      },
-      {
-        artifacts: "node_modules/@venusprotocol/protocol-reserve/artifacts",
-      },
-      {
-        artifacts: "node_modules/@venusprotocol/governance-contracts/artifacts",
-      },
+      // {
+      //   artifacts: "node_modules/@venusprotocol/oracle/artifacts",
+      // },
+      // {
+      //   artifacts: "node_modules/@venusprotocol/venus-protocol/artifacts",
+      // },
+      // {
+      //   artifacts: "node_modules/@venusprotocol/protocol-reserve/artifacts",
+      // },
+      // {
+      //   artifacts: "node_modules/@venusprotocol/governance-contracts/artifacts",
+      // },
     ],
   },
   dependencyCompiler: {
