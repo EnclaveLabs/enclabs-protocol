@@ -1,7 +1,7 @@
 #source .env in .env directory
 -include .env
 
-.PHONY: deploy 
+.PHONY: deploy compile
 
 #####################
 # Deployment
@@ -40,4 +40,4 @@ deploy_comptrollers:
 	@make deploy tags=Comptrollers chain=${chain}	
 
 compile:	
-	@make npx hardhat compile
+	@npx hardhat compile
