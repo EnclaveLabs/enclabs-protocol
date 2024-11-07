@@ -2,7 +2,7 @@
 pragma solidity 0.8.25;
 
 import { IERC20Upgradeable } from "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
-import { ResilientOracleInterface } from "@venusprotocol/oracle/contracts/interfaces/OracleInterface.sol";
+import { ResilientOracleInterface } from "./Oracle/OracleInterface.sol";
 
 import { ComptrollerInterface } from "./ComptrollerInterface.sol";
 import { InterestRateModel } from "./InterestRateModel.sol";

@@ -35,4 +35,9 @@ deploy_poolregistry:
 deploy_poollens:
 	@make deploy tags=PoolLens chain=${chain}	
 
+# 5 - Deploy Comptollers
+deploy_comptrollers:
+	@make deploy tags=Comptrollers chain=${chain}	
 
+compile:	
+	@make npx hardhat compile

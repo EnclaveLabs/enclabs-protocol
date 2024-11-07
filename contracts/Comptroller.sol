@@ -2,9 +2,9 @@
 pragma solidity 0.8.25;
 
 import { Ownable2StepUpgradeable } from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
-import { ResilientOracleInterface } from "@venusprotocol/oracle/contracts/interfaces/OracleInterface.sol";
-import { AccessControlledV8 } from "@venusprotocol/governance-contracts/contracts/Governance/AccessControlledV8.sol";
-import { IPrime } from "@venusprotocol/venus-protocol/contracts/Tokens/Prime/Interfaces/IPrime.sol";
+import { ResilientOracleInterface } from "./Oracle/OracleInterface.sol";
+import { AccessControlledV8 } from "./Governance/AccessControlledV8.sol";  
+import { IPrime } from "./Prime/IPrime.sol";
 
 import { ComptrollerInterface, Action } from "./ComptrollerInterface.sol";
 import { ComptrollerStorage } from "./ComptrollerStorage.sol";
