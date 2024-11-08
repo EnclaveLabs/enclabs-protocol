@@ -39,6 +39,7 @@
     "VToken_vweETH_LiquidStakedETH": "0x8A92Ff0572fb469e198c13b2D03a9acF73F39cEE",
     "VToken_vwstETH_LiquidStakedETH": "0x1877223ad64a218Ee73b32f695DD08545502d235",
     "ProtocolShareReserve_Implementation": "0x2516DFBac0D911Ed42977f7180fD52f886E6Dff5",
-    "ProtocolShareReserve_Proxy": "0x4c38f59DAB27C2eec44312F8e708e384Cd8b870A"
+    "ProtocolShareReserve_Proxy": "0x4c38f59DAB27C2eec44312F8e708e384Cd8b870A",
+    "VTreasuryV8": "0xD0050d4D0611D78C44A62183fba542161CEC11D2"
   }
 }

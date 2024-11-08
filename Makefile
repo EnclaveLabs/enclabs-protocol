@@ -51,3 +51,6 @@ deploy_psr:
 # 7 - Deploy VTokens
 deploy_vtokens:
 	@make deploy tags=VTokens chain=${chain}
+# 8 - Deploy VTreasury
+deploy_vtreasury:	
+	@make deploy tags=VTreasuryV8 chain=${chain}
