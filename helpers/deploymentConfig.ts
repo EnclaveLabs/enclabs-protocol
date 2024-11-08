@@ -115,7 +115,7 @@ const REDUCE_RESERVES_BLOCK_DELTA_ARBITRUM_ONE = "86400";
 
 export const preconfiguredAddresses = {
   arbitrumone: {
-    VTreasury: '0x705A1AC9c9e57cc78993Ab8c0C8AAeb75657e02a',
+    VTreasury: '0xD0050d4D0611D78C44A62183fba542161CEC11D2', //treasury
     //NormalTimelock: ARBITRUM_ONE_MULTISIG,
     FastTrackTimelock: ARBITRUM_ONE_MULTISIG,
     CriticalTimelock: ARBITRUM_ONE_MULTISIG,

@@ -62,7 +62,7 @@ const sendInitialLiquidityToTreasury = async (deploymentConfig: DeploymentConfig
     console.log(`Sending ${amount} ${symbol} to VTreasury`);
     console.log(`Token Contract: ${tokenContract.address}`);
     console.log(`Token Contract: ${amount.toString()}`);
-    const treasuryAddress = await toAddress(preconfiguredAddresses.VTreasury || "VTreasury", hre);
+    const treasuryAddress = await toAddress(preconfiguredAddresses.VTreasury || "VTreasury", hre); //check preconfigured address
     console.log(`Token Contract: ${treasuryAddress}`);
 
     const tx = await tokenContract.transfer(treasuryAddress, amount, { gasLimit: 5000000 });
