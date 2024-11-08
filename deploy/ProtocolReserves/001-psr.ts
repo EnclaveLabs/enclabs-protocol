@@ -37,14 +37,34 @@ console.log(deployer);
         methodName: "initialize",
         args: [acmAddress, loopsLimit],
       },
-      viaAdminContract: {
-        name: "DefaultProxyAdmin",
-        artifact: defaultProxyAdmin,
-      },
+      // viaAdminContract: {
+      //   name: "DefaultProxyAdmin",
+      //   artifact: defaultProxyAdmin,
+      // },
     },
   });
 
-  const psr2 = await hre.ethers.getContract("ProtocolShareReserve");
+
+  const psr = await hre.ethers.getContract("ProtocolShareReserve");
+  const poolRegistry = await ethers.getContract("PoolRegistry");
+  const tx1 = await psr.setPoolRegistry(poolRegistry.address);
+  await tx1.wait();
+
+  const tx2 = await psr.addOrUpdateDistributionConfigs([
+    {
+      schema: 0,
+      destination: deployer,
+      percentage: 10000,
+    },
+    {
+      schema: 1,
+      destination: deployer,
+      percentage: 10000,
+    },
+   
+]);
+await tx2.wait();
+
 
 //   if (live) {
 //     const tx = await psr.transferOwnership(timelockAddress);

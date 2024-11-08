@@ -20,6 +20,7 @@ import { convertToUnit } from "./helpers/utils";
 
 dotenv.config();
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY;
+const DEPLOYER_PRIVATE_KEY2 = process.env.DEPLOYER_PRIVATE_KEY2;
 
 extendConfig((config: HardhatConfig) => {
   if (process.env.EXPORT !== "true") {
@@ -273,7 +274,7 @@ const config: HardhatUserConfig = {
       url: process.env.ARCHIVE_NODE_arbitrumone || "https://arb1.arbitrum.io/rpc",
       chainId: 42161,
       live: true,
-      accounts: DEPLOYER_PRIVATE_KEY ? [`0x${DEPLOYER_PRIVATE_KEY}`] : [],
+      accounts: DEPLOYER_PRIVATE_KEY ? [`0x${DEPLOYER_PRIVATE_KEY}`,`0x${DEPLOYER_PRIVATE_KEY2}`] : [],
     },
     opsepolia: {
       url: process.env.ARCHIVE_NODE_opsepolia || "https://sepolia.optimism.io",
@@ -402,7 +403,7 @@ const config: HardhatUserConfig = {
   // Hardhat deploy
   namedAccounts: {
     deployer: 0,
-    acc1: 1,
+    deployer2: 1,
     acc2: 2,
     proxyAdmin: 3,
     acc3: 4,
