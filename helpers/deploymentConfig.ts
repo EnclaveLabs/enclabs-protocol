@@ -233,7 +233,27 @@ export const globalConfig: NetworkConfig = {
         decimals: 6,
         tokenAddress: "0xfd086bc7cd5c481dcc9c85ebe478a1c0b69fcbb9",
       },
-      
+      {
+        isMock: false,
+        name: "Arbitrum",
+        symbol: "ARB",
+        decimals: 18,
+        tokenAddress: "0x912ce59144191c1204e64559fe8253a0e49e6548",
+      },
+      {
+        isMock: false,
+        name: "Wrapped liquid staked Ether 2.0.",
+        symbol: "wstETH",
+        decimals: 18,
+        tokenAddress: "0x5979D7b546E38E414F7E9822514be443A4800529",
+      },
+      {
+        isMock: false,
+        name: "Wrapped eETH",
+        symbol: "weETH",
+        decimals: 18,
+        tokenAddress: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe",
+      },
     ],
     poolConfig: [
       {

@@ -48,3 +48,6 @@ deploy_comptrollers:
 deploy_psr:
 	@make deploy tags=ProtocolShareReserve chain=${chain}
 
+# 7 - Deploy VTokens
+deploy_vtokens:
+	@make deploy tags=VTokens chain=${chain}
