@@ -1,7 +1,12 @@
 #source .env in .env directory
 -include .env
 
-.PHONY: deploy 
+.PHONY: deploy compile
+
+
+compile:	
+	@npx hardhat compile
+
 
 #####################
 # Deployment
@@ -40,9 +45,6 @@ deploy_comptrollers:
 	@make deploy tags=Comptrollers chain=${chain}	
 
 # 6 - Deploy Protocol Share Reserve
-deploy_protocol_share_reserve:
+deploy_psr:
 	@make deploy tags=ProtocolShareReserve chain=${chain}
 
-
-compile:	
-	@make npx hardhat compile
