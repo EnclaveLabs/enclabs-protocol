@@ -3,6 +3,8 @@ import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
 import { AddressOne, multisigs } from "../../helpers/utils";
+import { getConfig } from "../../helpers/deploymentConfig";
+import { toAddress } from "../../helpers/deploymentUtils";
 
 const func: DeployFunction = async ({
   network: { live, name },
@@ -15,11 +17,17 @@ const func: DeployFunction = async ({
   const vBNBAddress = (await ethers.getContractOrNull("vBNB"))?.address || AddressOne;
   const comptrollerAddress = (await ethers.getContractOrNull("Unitroller"))?.address || AddressOne;
   const WBNBAddress = (await ethers.getContractOrNull("WBNB"))?.address || AddressOne;
-  //const timelockAddress = (await ethers.getContractOrNull("NormalTimelock"))?.address || multisigs[name];
-  const timelockAddress = deployer; //TOFIX deployer
+  const timelockAddress = (await ethers.getContractOrNull("NormalTimelock"))?.address || multisigs[name];
+  //const timelockAddress = deployer; //TOFIX deployer
   const acmAddress = (await ethers.getContractOrNull("AccessControlManager"))?.address || AddressOne;
   const loopsLimit = 20;
-
+  const { preconfiguredAddresses } = await getConfig(hre.network.name);
+  const accessControlManagerAddress = await toAddress(
+    preconfiguredAddresses.AccessControlManager || "AccessControlManager",
+    hre,
+  );
+  const proxyOwnerAddress = await toAddress(preconfiguredAddresses.NormalTimelock || "account:deployer", hre);
+console.log(proxyOwnerAddress);
   const defaultProxyAdmin = await hre.artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
@@ -27,20 +35,20 @@ console.log(deployer);
   await deploy("ProtocolShareReserve", {
     from: deployer,
     log: true,
-    deterministicDeployment: false,
+    autoMine: true,
     args: [comptrollerAddress, WBNBAddress, vBNBAddress],
     skipIfAlreadyDeployed: true,
     proxy: {
-      owner:  deployer,
+      owner:  timelockAddress,
       proxyContract: "OptimizedTransparentUpgradeableProxy",
       execute: {
         methodName: "initialize",
         args: [acmAddress, loopsLimit],
       },
-      // viaAdminContract: {
-      //   name: "DefaultProxyAdmin",
-      //   artifact: defaultProxyAdmin,
-      // },
+      viaAdminContract: {
+        name: "DefaultProxyAdmin",
+        artifact: defaultProxyAdmin,
+      },
     },
   });
 
@@ -49,6 +57,7 @@ console.log(deployer);
   const poolRegistry = await ethers.getContract("PoolRegistry");
   const tx1 = await psr.setPoolRegistry(poolRegistry.address);
   await tx1.wait();
+  console.log("PSR pool registry set");
 
   const tx2 = await psr.addOrUpdateDistributionConfigs([
     {
@@ -63,8 +72,9 @@ console.log(deployer);
     },
    
 ]);
-await tx2.wait();
 
+await tx2.wait();
+console.log("PSR distribution configs added");
 
 //   if (live) {
 //     const tx = await psr.transferOwnership(timelockAddress);
