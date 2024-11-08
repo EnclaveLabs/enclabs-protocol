@@ -31,7 +31,7 @@ console.log(proxyOwnerAddress);
   const defaultProxyAdmin = await hre.artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
-console.log(deployer);
+
   await deploy("ProtocolShareReserve", {
     from: deployer,
     log: true,
@@ -52,28 +52,61 @@ console.log(deployer);
     },
   });
 
-
-  const psr = await hre.ethers.getContract("ProtocolShareReserve");
-  const poolRegistry = await ethers.getContract("PoolRegistry");
+   const psr = await hre.ethers.getContract("ProtocolShareReserve");
+   const poolRegistry = await ethers.getContract("PoolRegistry");
   const tx1 = await psr.setPoolRegistry(poolRegistry.address);
   await tx1.wait();
   console.log("PSR pool registry set");
 
-  const tx2 = await psr.addOrUpdateDistributionConfigs([
-    {
-      schema: 0,
-      destination: deployer,
-      percentage: 10000,
-    },
-    {
-      schema: 1,
-      destination: deployer,
-      percentage: 10000,
-    },
-   
-]);
+  try{
+    const AccessControlManager = await ethers.getContract("AccessControlManager");
+    const updateConfigSig = "addOrUpdateDistributionConfigs(DistributionConfig[])";
+    const allowedToUpdateConfig = await AccessControlManager.isAllowedToCall(deployer, updateConfigSig);
+    // const allowedToUpdateConfig = await AccessControlManager.hasPermission(
+    //   deployer,
+    //   ethers.constants.AddressZero,
+    //   "addOrUpdateDistributionConfigs(DistributionConfig[])");
+    console.log("Is allowed to update config: ", allowedToUpdateConfig);
 
-await tx2.wait();
+    if(!allowedToUpdateConfig){
+
+      const txPermission  = await AccessControlManager.giveCallPermission(
+        ethers.constants.AddressZero,
+        updateConfigSig,
+        deployer,
+      );
+      await txPermission.wait();
+
+      const allowedToUpdateConfig = await AccessControlManager.isAllowedToCall(deployer, updateConfigSig);
+      console.log("Is allowed to update config: ", allowedToUpdateConfig);
+    }
+
+    const tx2 = await psr.addOrUpdateDistributionConfigs(
+      [
+        {
+          schema: 0,
+          percentage: 10000,
+          destination: deployer,
+        },
+        {
+          schema: 1,
+          percentage: 10000,
+          destination: deployer,
+        },
+      ],     
+      { gasLimit: 500000 },
+    );
+
+  await tx2.wait();
+
+  const config0 = await psr.distributionTargets(0);
+  console.log("config 0: ", config0);
+  const config1 = await psr.distributionTargets(1);
+  console.log("config 1: ", config1);
+}
+catch(error){
+  console.error(error);
+}
 console.log("PSR distribution configs added");
 
 //   if (live) {

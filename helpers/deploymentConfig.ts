@@ -422,6 +422,7 @@ export const globalConfig: NetworkConfig = {
     accessControlConfig: [
       ...poolRegistryPermissions(),
       ...normalTimelockPermissions(preconfiguredAddresses.arbitrumone.NormalTimelock),
+      ...deployerPermissions(),
     ],
     preconfiguredAddresses: preconfiguredAddresses.arbitrumone,
   },
