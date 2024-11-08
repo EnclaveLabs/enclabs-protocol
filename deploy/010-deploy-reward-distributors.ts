@@ -26,7 +26,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const defaultProxyAdmin = await hre.artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
-
+  console.log("proxyOwnerAddress", proxyOwnerAddress);
   const pools = await getUnregisteredRewardsDistributors(poolConfig, hre);
 
   await deploy("RewardsDistributorImpl", {

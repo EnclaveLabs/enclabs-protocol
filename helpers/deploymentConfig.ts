@@ -116,10 +116,10 @@ const REDUCE_RESERVES_BLOCK_DELTA_ARBITRUM_ONE = "86400";
 export const preconfiguredAddresses = {
   arbitrumone: {
     VTreasury: '0x705A1AC9c9e57cc78993Ab8c0C8AAeb75657e02a',
-    NormalTimelock: ARBITRUM_ONE_MULTISIG,
+    //NormalTimelock: ARBITRUM_ONE_MULTISIG,
     FastTrackTimelock: ARBITRUM_ONE_MULTISIG,
     CriticalTimelock: ARBITRUM_ONE_MULTISIG,
-    // NormalTimelock: governanceArbitrumOne.NormalTimelock.address,
+    NormalTimelock: governanceArbitrumOne.NormalTimelock.address,
     // FastTrackTimelock: governanceArbitrumOne.FastTrackTimelock.address,
     // CriticalTimelock: governanceArbitrumOne.CriticalTimelock.address,
     AccessControlManager: governanceArbitrumOne.AccessControlManager.address,
