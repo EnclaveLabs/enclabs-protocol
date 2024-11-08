@@ -39,5 +39,10 @@ deploy_poollens:
 deploy_comptrollers:
 	@make deploy tags=Comptrollers chain=${chain}	
 
+# 6 - Deploy Protocol Share Reserve
+deploy_protocol_share_reserve:
+	@make deploy tags=ProtocolShareReserve chain=${chain}
+
+
 compile:	
 	@make npx hardhat compile

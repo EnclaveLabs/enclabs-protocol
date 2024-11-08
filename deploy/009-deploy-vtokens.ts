@@ -1,4 +1,4 @@
-import deployProtocolShareReserve from "@venusprotocol/protocol-reserve/dist/deploy/001-psr";
+//import deployProtocolShareReserve from "@venusprotocol/protocol-reserve/dist/deploy/001-psr";
 import { BigNumber, BigNumberish } from "ethers";
 import { parseUnits } from "ethers/lib/utils";
 import { ethers } from "hardhat";
@@ -124,7 +124,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       } catch (e) {
         if (!hre.network.live) {
           console.warn("ProtocolShareReserve contract not found. Deploying address");
-          await deployProtocolShareReserve(hre);
+          //await deployProtocolShareReserve(hre);
           protocolShareReserveAddress = (await ethers.getContract("ProtocolShareReserve")).address;
         } else {
           throw e;
