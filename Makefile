@@ -54,3 +54,11 @@ deploy_vtokens:
 # 8 - Deploy VTreasury
 deploy_vtreasury:	
 	@make deploy tags=VTreasuryV8 chain=${chain}
+
+
+
+
+#TODO
+#12 - TransferPoolOwnership 
+transfer_pool_ownership
+	@make deploy tags=TransferPoolsOwnership chain=${chain}

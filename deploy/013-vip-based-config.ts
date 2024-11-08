@@ -1,6 +1,6 @@
 import { BigNumberish } from "ethers";
 import { defaultAbiCoder, parseEther } from "ethers/lib/utils";
-import { ethers } from "hardhat";
+import { ethers, getNamedAccounts } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
@@ -86,7 +86,7 @@ const configureRewards = async (
           const contractName = `RewardsDistributor_${pool.id}_${idx}`;
           const rewardsDistributor = await ethers.getContract<RewardsDistributor>(contractName);
           return [
-            ...(await acceptOwnership(contractName, owner, hre)),
+            //...(await acceptOwnership(contractName, owner, hre)), // TOFIX
             await addRewardsDistributor(rewardsDistributor, pool, rewardConfig),
             await setRewardSpeed(pool, rewardsDistributor, rewardConfig),
           ];
@@ -163,7 +163,7 @@ const addPools = async (
     unregisteredPools.map(async (pool: PoolConfig) => {
       const comptroller = await ethers.getContract<Comptroller>(`Comptroller_${pool.id}`);
       return [
-        ...(await acceptOwnership(`Comptroller_${pool.id}`, poolsOwner, hre)),
+        //...(await acceptOwnership(`Comptroller_${pool.id}`, poolsOwner, hre)), // TOFIX 
         await setOracle(comptroller, pool),
         addPool(poolRegistry, comptroller, pool),
       ];
@@ -180,6 +180,7 @@ const transferInitialLiquidity = async (
   if (!hre.network.live) {
     return [];
   }
+  const { deployer } = await getNamedAccounts();
   const { preconfiguredAddresses, tokensConfig } = deploymentConfig;
   const { asset, initialSupply } = vTokenConfig;
   const token = getTokenConfig(asset, tokensConfig);
@@ -190,7 +191,7 @@ const transferInitialLiquidity = async (
       contract: preconfiguredAddresses.VTreasury,
       signature: "withdrawTreasuryToken(address,uint256,address)",
       argTypes: ["address", "uint256", "address"],
-      parameters: [tokenContract.address, initialSupply, preconfiguredAddresses.NormalTimelock],
+      parameters: [tokenContract.address, initialSupply, deployer], //TOFIX: deployer should be the timelock
       value: 0,
     },
   ];
@@ -377,25 +378,27 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const unregisteredPools = await getUnregisteredPools(poolConfig, hre);
   const unregisteredVTokens = await getUnregisteredVTokens(poolConfig, hre);
   const unregisteredRewardsDistributors = await getUnregisteredRewardsDistributors(poolConfig, hre);
-  const owner = preconfiguredAddresses.NormalTimelock || deployer;
+  //const owner = preconfiguredAddresses.NormalTimelock || deployer; //TOFIX
+  const owner =  deployer; //tofix should be timelock
   const commands = [
-    ...(await configureAccessControls(deploymentConfig, hre)),
+    //...(await configureAccessControls(deploymentConfig, hre)), TOFIX uncomment for new instance
     ...(await acceptOwnership("PoolRegistry", owner, hre)),
     ...(await addPools(unregisteredPools, owner, hre)),
     ...(await addMarkets(unregisteredVTokens, deploymentConfig, hre)),
     ...(await configureRewards(unregisteredRewardsDistributors, owner, hre)),
   ];
 
-  if (hre.network.live) {
-    console.log("Please propose a VIP with the following commands:");
-    console.log(
-      JSON.stringify(
-        commands.map(c => ({ target: c.contract, signature: c.signature, params: c.parameters, value: c.value })),
-      ),
-    );
-  } else {
-    await executeCommands(commands, hre);
-  }
+  // if (hre.network.live) {
+  //   console.log("Please propose a VIP with the following commands:");
+  //   console.log(
+  //     JSON.stringify(
+  //       commands.map(c => ({ target: c.contract, signature: c.signature, params: c.parameters, value: c.value })),
+  //     ),
+  //   );
+  // } else {
+  //   await executeCommands(commands, hre);
+  // }
+  await executeCommands(commands, hre);
 };
 
 func.tags = ["VIP", "il"];
