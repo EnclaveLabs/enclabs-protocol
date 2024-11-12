@@ -1,5 +1,5 @@
 {
-  "address": "0x133C4908A88e38460E85Cf06aD71D7E0d8A3A399",
+  "address": "0xF386Ed6ed2db315f89e8b3d9518986A49F66628b",
   "abi": [
     {
       "anonymous": false,
@@ -170,56 +170,6 @@
         {
           "indexed": true,
           "internalType": "address",
-          "name": "asset",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "role",
-          "type": "uint256"
-        },
-        {
-          "indexed": true,
-          "internalType": "bool",
-          "name": "enable",
-          "type": "bool"
-        }
-      ],
-      "name": "OracleEnabled",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "asset",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "oracle",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "uint256",
-          "name": "role",
-          "type": "uint256"
-        }
-      ],
-      "name": "OracleSet",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
           "name": "previousOwner",
           "type": "address"
         },
@@ -256,13 +206,25 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
+          "indexed": true,
           "internalType": "address",
-          "name": "account",
+          "name": "asset",
           "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "previousPriceMantissa",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "newPriceMantissa",
+          "type": "uint256"
         }
       ],
-      "name": "Paused",
+      "name": "PricePosted",
       "type": "event"
     },
     {
@@ -275,43 +237,24 @@
           "type": "address"
         },
         {
-          "indexed": true,
+          "indexed": false,
           "internalType": "address",
-          "name": "mainOracle",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "pivotOracle",
+          "name": "feed",
           "type": "address"
         },
         {
           "indexed": false,
-          "internalType": "address",
-          "name": "fallbackOracle",
-          "type": "address"
+          "internalType": "uint256",
+          "name": "maxStalePeriod",
+          "type": "uint256"
         }
       ],
       "name": "TokenConfigAdded",
       "type": "event"
     },
     {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "account",
-          "type": "address"
-        }
-      ],
-      "name": "Unpaused",
-      "type": "event"
-    },
-    {
       "inputs": [],
-      "name": "INVALID_PRICE",
+      "name": "GRACE_PERIOD_TIME",
       "outputs": [
         {
           "internalType": "uint256",
@@ -356,71 +299,6 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "boundValidator",
-      "outputs": [
-        {
-          "internalType": "contract BoundValidatorInterface",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "asset",
-          "type": "address"
-        },
-        {
-          "internalType": "enum ResilientOracle.OracleRole",
-          "name": "role",
-          "type": "uint8"
-        },
-        {
-          "internalType": "bool",
-          "name": "enable",
-          "type": "bool"
-        }
-      ],
-      "name": "enableOracle",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "asset",
-          "type": "address"
-        },
-        {
-          "internalType": "enum ResilientOracle.OracleRole",
-          "name": "role",
-          "type": "uint8"
-        }
-      ],
-      "name": "getOracle",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "oracle",
-          "type": "address"
-        },
-        {
-          "internalType": "bool",
-          "name": "enabled",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "address",
@@ -429,61 +307,6 @@
         }
       ],
       "name": "getPrice",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "asset",
-          "type": "address"
-        }
-      ],
-      "name": "getTokenConfig",
-      "outputs": [
-        {
-          "components": [
-            {
-              "internalType": "address",
-              "name": "asset",
-              "type": "address"
-            },
-            {
-              "internalType": "address[3]",
-              "name": "oracles",
-              "type": "address[3]"
-            },
-            {
-              "internalType": "bool[3]",
-              "name": "enableFlagsForOracles",
-              "type": "bool[3]"
-            }
-          ],
-          "internalType": "struct ResilientOracle.TokenConfig",
-          "name": "",
-          "type": "tuple"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "vToken",
-          "type": "address"
-        }
-      ],
-      "name": "getUnderlyingPrice",
       "outputs": [
         {
           "internalType": "uint256",
@@ -509,45 +332,12 @@
     },
     {
       "inputs": [],
-      "name": "nativeMarket",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "owner",
       "outputs": [
         {
           "internalType": "address",
           "name": "",
           "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "pause",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "paused",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
         }
       ],
       "stateMutability": "view",
@@ -567,10 +357,42 @@
       "type": "function"
     },
     {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "prices",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
       "inputs": [],
       "name": "renounceOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "sequencer",
+      "outputs": [
+        {
+          "internalType": "contract AggregatorV3Interface",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -594,17 +416,12 @@
           "type": "address"
         },
         {
-          "internalType": "address",
-          "name": "oracle",
-          "type": "address"
-        },
-        {
-          "internalType": "enum ResilientOracle.OracleRole",
-          "name": "role",
-          "type": "uint8"
+          "internalType": "uint256",
+          "name": "price",
+          "type": "uint256"
         }
       ],
-      "name": "setOracle",
+      "name": "setDirectPrice",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -619,17 +436,17 @@
               "type": "address"
             },
             {
-              "internalType": "address[3]",
-              "name": "oracles",
-              "type": "address[3]"
+              "internalType": "address",
+              "name": "feed",
+              "type": "address"
             },
             {
-              "internalType": "bool[3]",
-              "name": "enableFlagsForOracles",
-              "type": "bool[3]"
+              "internalType": "uint256",
+              "name": "maxStalePeriod",
+              "type": "uint256"
             }
           ],
-          "internalType": "struct ResilientOracle.TokenConfig",
+          "internalType": "struct ChainlinkOracle.TokenConfig",
           "name": "tokenConfig",
           "type": "tuple"
         }
@@ -649,17 +466,17 @@
               "type": "address"
             },
             {
-              "internalType": "address[3]",
-              "name": "oracles",
-              "type": "address[3]"
+              "internalType": "address",
+              "name": "feed",
+              "type": "address"
             },
             {
-              "internalType": "bool[3]",
-              "name": "enableFlagsForOracles",
-              "type": "bool[3]"
+              "internalType": "uint256",
+              "name": "maxStalePeriod",
+              "type": "uint256"
             }
           ],
-          "internalType": "struct ResilientOracle.TokenConfig[]",
+          "internalType": "struct ChainlinkOracle.TokenConfig[]",
           "name": "tokenConfigs_",
           "type": "tuple[]"
         }
@@ -673,6 +490,35 @@
       "inputs": [
         {
           "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "tokenConfigs",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "asset",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "feed",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "maxStalePeriod",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
           "name": "newOwner",
           "type": "address"
         }
@@ -680,52 +526,6 @@
       "name": "transferOwnership",
       "outputs": [],
       "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "unpause",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "asset",
-          "type": "address"
-        }
-      ],
-      "name": "updateAssetPrice",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "vToken",
-          "type": "address"
-        }
-      ],
-      "name": "updatePrice",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "vai",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -750,88 +550,88 @@
       "type": "constructor"
     }
   ],
-  "transactionHash": "0xd99184c2235294b7c7a312f641fd2e0431afad57aa5a1495838f757738b3c791",
+  "transactionHash": "0x97ff0e3b4a55345c28ed2550c57ed9382fa3d2d41eafa68a0b05b3ab002454a5",
   "receipt": {
     "to": null,
     "from": "0x705A1AC9c9e57cc78993Ab8c0C8AAeb75657e02a",
-    "contractAddress": "0x133C4908A88e38460E85Cf06aD71D7E0d8A3A399",
-    "transactionIndex": 1,
-    "gasUsed": "2856058",
-    "logsBloom": "0x00000000000000000000004000000000400000000000000000800000000000000000000000000000000000000000000000000000000000000000000010008000000000000000000000040000000002000001000000000000000000000000000000000000020000002000000000000800000004800000000000000000000800400000000000000000000000001000000000000000000080000000000000800000000000000000000000000000000400000000000000800000000000000000000000000020000000000000000000040000000400002400000000000000000020000000000000000000000000000000000000000800000000000000000000000000",
-    "blockHash": "0x496d2a637eddad0e4d1977cfb2ad77aa6e5181e34169f0d04551308194e3a989",
-    "transactionHash": "0xd99184c2235294b7c7a312f641fd2e0431afad57aa5a1495838f757738b3c791",
+    "contractAddress": "0xF386Ed6ed2db315f89e8b3d9518986A49F66628b",
+    "transactionIndex": 3,
+    "gasUsed": "2859734",
+    "logsBloom": "0x00000000000000000000000000000000400000000000000000800000000000000040000000000000000000000000000000000000000000000000000080008000000000000000000000000000000002000001000000000000000000000000000000000000020000000000000000000800000000800000000000000000000800408000001000000000000000001000000000000000000080000000000000800000000000000000000000000000000400004000000000800000000000000000000000000020000000000000000000040000000008002400000000000000000020000000000000000000000000000000000000000800000000000000000000000000",
+    "blockHash": "0xf2eb80fe20815aca93729a82afce4962ce63c74466ec09cd4321ae713e3c8e34",
+    "transactionHash": "0x97ff0e3b4a55345c28ed2550c57ed9382fa3d2d41eafa68a0b05b3ab002454a5",
     "logs": [
       {
-        "transactionIndex": 1,
-        "blockNumber": 273737519,
-        "transactionHash": "0xd99184c2235294b7c7a312f641fd2e0431afad57aa5a1495838f757738b3c791",
-        "address": "0x133C4908A88e38460E85Cf06aD71D7E0d8A3A399",
+        "transactionIndex": 3,
+        "blockNumber": 273737584,
+        "transactionHash": "0x97ff0e3b4a55345c28ed2550c57ed9382fa3d2d41eafa68a0b05b3ab002454a5",
+        "address": "0xF386Ed6ed2db315f89e8b3d9518986A49F66628b",
         "topics": [
           "0xbc7cd75a20ee27fd9adebab32041f755214dbc6bffa90cc0225b39da2e5c2d3b",
-          "0x00000000000000000000000068f319f3092d21ed2efe583d696858de2501a9cb"
+          "0x00000000000000000000000057c58c5f0752f4270e1b74644b41dcf512ad180e"
         ],
         "data": "0x",
-        "logIndex": 0,
-        "blockHash": "0x496d2a637eddad0e4d1977cfb2ad77aa6e5181e34169f0d04551308194e3a989"
+        "logIndex": 7,
+        "blockHash": "0xf2eb80fe20815aca93729a82afce4962ce63c74466ec09cd4321ae713e3c8e34"
       },
       {
-        "transactionIndex": 1,
-        "blockNumber": 273737519,
-        "transactionHash": "0xd99184c2235294b7c7a312f641fd2e0431afad57aa5a1495838f757738b3c791",
-        "address": "0x133C4908A88e38460E85Cf06aD71D7E0d8A3A399",
+        "transactionIndex": 3,
+        "blockNumber": 273737584,
+        "transactionHash": "0x97ff0e3b4a55345c28ed2550c57ed9382fa3d2d41eafa68a0b05b3ab002454a5",
+        "address": "0xF386Ed6ed2db315f89e8b3d9518986A49F66628b",
         "topics": [
           "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0",
           "0x0000000000000000000000000000000000000000000000000000000000000000",
           "0x000000000000000000000000705a1ac9c9e57cc78993ab8c0c8aaeb75657e02a"
         ],
         "data": "0x",
-        "logIndex": 1,
-        "blockHash": "0x496d2a637eddad0e4d1977cfb2ad77aa6e5181e34169f0d04551308194e3a989"
+        "logIndex": 8,
+        "blockHash": "0xf2eb80fe20815aca93729a82afce4962ce63c74466ec09cd4321ae713e3c8e34"
       },
       {
-        "transactionIndex": 1,
-        "blockNumber": 273737519,
-        "transactionHash": "0xd99184c2235294b7c7a312f641fd2e0431afad57aa5a1495838f757738b3c791",
-        "address": "0x133C4908A88e38460E85Cf06aD71D7E0d8A3A399",
+        "transactionIndex": 3,
+        "blockNumber": 273737584,
+        "transactionHash": "0x97ff0e3b4a55345c28ed2550c57ed9382fa3d2d41eafa68a0b05b3ab002454a5",
+        "address": "0xF386Ed6ed2db315f89e8b3d9518986A49F66628b",
         "topics": [
           "0x66fd58e82f7b31a2a5c30e0888f3093efe4e111b00cd2b0c31fe014601293aa0"
         ],
         "data": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000004d7395dbf10b34da58216d104b1423e8ac9dc42f",
-        "logIndex": 2,
-        "blockHash": "0x496d2a637eddad0e4d1977cfb2ad77aa6e5181e34169f0d04551308194e3a989"
+        "logIndex": 9,
+        "blockHash": "0xf2eb80fe20815aca93729a82afce4962ce63c74466ec09cd4321ae713e3c8e34"
       },
       {
-        "transactionIndex": 1,
-        "blockNumber": 273737519,
-        "transactionHash": "0xd99184c2235294b7c7a312f641fd2e0431afad57aa5a1495838f757738b3c791",
-        "address": "0x133C4908A88e38460E85Cf06aD71D7E0d8A3A399",
+        "transactionIndex": 3,
+        "blockNumber": 273737584,
+        "transactionHash": "0x97ff0e3b4a55345c28ed2550c57ed9382fa3d2d41eafa68a0b05b3ab002454a5",
+        "address": "0xF386Ed6ed2db315f89e8b3d9518986A49F66628b",
         "topics": [
           "0x7f26b83ff96e1f2b6a682f133852f6798a09c465da95921460cefb3847402498"
         ],
         "data": "0x0000000000000000000000000000000000000000000000000000000000000001",
-        "logIndex": 3,
-        "blockHash": "0x496d2a637eddad0e4d1977cfb2ad77aa6e5181e34169f0d04551308194e3a989"
+        "logIndex": 10,
+        "blockHash": "0xf2eb80fe20815aca93729a82afce4962ce63c74466ec09cd4321ae713e3c8e34"
       },
       {
-        "transactionIndex": 1,
-        "blockNumber": 273737519,
-        "transactionHash": "0xd99184c2235294b7c7a312f641fd2e0431afad57aa5a1495838f757738b3c791",
-        "address": "0x133C4908A88e38460E85Cf06aD71D7E0d8A3A399",
+        "transactionIndex": 3,
+        "blockNumber": 273737584,
+        "transactionHash": "0x97ff0e3b4a55345c28ed2550c57ed9382fa3d2d41eafa68a0b05b3ab002454a5",
+        "address": "0xF386Ed6ed2db315f89e8b3d9518986A49F66628b",
         "topics": [
           "0x7e644d79422f17c01e4894b5f4f588d331ebfa28653d42ae832dc59e38c9798f"
         ],
         "data": "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000fbb9b8353adab2cfcb60d7d52645d95ce2ba30db",
-        "logIndex": 4,
-        "blockHash": "0x496d2a637eddad0e4d1977cfb2ad77aa6e5181e34169f0d04551308194e3a989"
+        "logIndex": 11,
+        "blockHash": "0xf2eb80fe20815aca93729a82afce4962ce63c74466ec09cd4321ae713e3c8e34"
       }
     ],
-    "blockNumber": 273737519,
-    "cumulativeGasUsed": "2856058",
+    "blockNumber": 273737584,
+    "cumulativeGasUsed": "4006674",
     "status": 1,
     "byzantium": true
   },
   "args": [
-    "0x68f319f3092d21ed2efE583D696858dE2501a9CB",
+    "0x57c58c5f0752F4270E1b74644b41dcf512ad180e",
     "0xfbB9b8353aDaB2CFCb60D7d52645D95Ce2Ba30Db",
     "0xc4d66de80000000000000000000000004d7395dbf10b34da58216d104b1423e8ac9dc42f"
   ],
@@ -846,7 +646,7 @@
       "0x4D7395dBF10b34Da58216d104B1423E8AC9dC42F"
     ]
   },
-  "implementation": "0x68f319f3092d21ed2efE583D696858dE2501a9CB",
+  "implementation": "0x57c58c5f0752F4270E1b74644b41dcf512ad180e",
   "devdoc": {
     "details": "This contract implements a proxy that is upgradeable by an admin. To avoid https://medium.com/nomic-labs-blog/malicious-backdoors-in-ethereum-proxies-62629adf3357[proxy selector clashing], which can potentially be used in an attack, this contract uses the https://blog.openzeppelin.com/the-transparent-proxy-pattern/[transparent proxy pattern]. This pattern implies two things that go hand in hand: 1. If any account other than the admin calls the proxy, the call will be forwarded to the implementation, even if that call matches one of the admin functions exposed by the proxy itself. 2. If the admin calls the proxy, it can access the admin functions, but its calls will never be forwarded to the implementation. If the admin tries to call a function on the implementation it will fail with an error that says \"admin cannot fallback to proxy target\". These properties mean that the admin account can only be used for admin actions like upgrading the proxy or changing the admin, so it's best if it's a dedicated account that is not used for anything else. This will avoid headaches due to sudden errors when trying to call a function from the proxy implementation. Our recommendation is for the dedicated account to be an instance of the {ProxyAdmin} contract. If set up this way, you should think of the `ProxyAdmin` instance as the real administrative interface of your proxy.",
     "events": {
