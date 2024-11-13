@@ -30,6 +30,7 @@ interface GovernanceCommand {
   value: BigNumberish;
 }
 
+
 const addRewardsDistributor = async (
   rewardsDistributor: RewardsDistributor,
   pool: PoolConfig,
@@ -272,16 +273,15 @@ const addMarkets = async (
       const vTokenCommands = await Promise.all(
         pool.vtokens.map(async (vTokenConfig: VTokenConfig) => {
           const { name, symbol } = vTokenConfig;
-
           const vToken = await ethers.getContract(`VToken_${symbol}`);
-
+            
           console.log("Adding market " + name + " to pool " + pool.name);
           return [
             ...(await transferInitialLiquidity(vTokenConfig, deploymentConfig, hre)),
             ...(await approvePoolRegistry(poolRegistry, vTokenConfig, deploymentConfig)),
             await setReduceReservesBlockDelta(vToken.address, vTokenConfig),
             await addMarket(poolRegistry, vToken.address, vTokenConfig, hre),
-          ];
+          ];  
         }),
       );
       return vTokenCommands.flat();

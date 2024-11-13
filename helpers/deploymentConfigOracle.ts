@@ -80,6 +80,9 @@ export const ADDRESSES: PreconfiguredAddresses = {
     wstETH: "0x5979D7b546E38E414F7E9822514be443A4800529",
     weETH: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe",
     WETH: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+    PTweETH_26JUN2025: "0xb33808ea0e883138680ba29311a220a7377cdb92",
+    PTweETH_26JUN2025_Market: "0xbf5e60ddf654085f80dae9dd33ec0e345773e1f8",
+    PTOracle: "0x9a9fa8338dd5e5b2188006f1cd2ef26d921650c2"
   },
 };
 
@@ -92,10 +95,8 @@ export const chainlinkFeed: Config = {
     ARB: "0xb2A824043730FE05F3DA2efaFa1CBbe83fa548D6",
     WETH: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
     wstETH: "0xB1552C5e96B312d0Bf8b554186F846C40614a540",
-    weETH: "0x20bAe7e1De9c596f5F7615aeaa1342Ba99294e12",
-    PTweETH_26JUN2025: "0xb33808ea0e883138680ba29311a220a7377cdb92",
-    PTweETH_26JUN2025_Market: "0xbf5e60ddf654085f80dae9dd33ec0e345773e1f8",
-    PTOracle: "0x9a9fa8338dd5e5b2188006f1cd2ef26d921650c2",
+    weETH: "0x20bAe7e1De9c596f5F7615aeaa1342Ba99294e12" //exchangerate should be onejumporacle 
+   
   },
   
 };
@@ -117,7 +118,7 @@ export const pythID: Config = {
 
 
 export const assets: Assets = {
-  arbitrumone: [
+  arbitrumone: [ //asset addresses
     {
       token: "WBTC",
       address: "0x2f2a2543b76a4166549f7aab2e75bef0aefc5b0f",
@@ -205,6 +206,20 @@ export const getOraclesData = async (): Promise<Oracles> => {
           },
         }
       : {}),
+      // ...(PendleOracle
+      //   ? {
+      //       pendle: {
+      //         oracles: [pendleOracle.address, addr0000, addr0000],
+      //         enableFlagsForOracles: [true, false, false],
+      //         underlyingOracle: redstoneOracle,
+      //         getTokenConfig: (asset: Asset, name: string) => ({
+      //           asset: asset.address,
+      //           feed: pendleFeed[name][asset.token],
+      //           maxStalePeriod: asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD,
+      //         }),
+      //       },
+      //     }
+      //   : {}),
     // ...(binanceOracle
     //   ? {
     //       binance: {
