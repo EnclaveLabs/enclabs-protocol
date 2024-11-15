@@ -26,6 +26,8 @@ export interface Asset {
   oracle: string;
   price?: string;
   stalePeriod?: number;
+  market?: string;
+  correlatedTo?: string;
 }
 
 export interface Assets {
@@ -104,7 +106,7 @@ export const chainlinkFeed: Config = {
 export const redstoneFeed: Config = {
   
   arbitrumone: {
-    XVS: "0xd9a66Ff1D660aD943F48e9c606D09eA672f312E8",
+   
   },
   
 };
@@ -113,6 +115,14 @@ export const pythID: Config = {
   arbitrumone: {
     
   },
+};
+export const pendleMarket: Config = {
+  
+  arbitrumone: {
+    PTweETH_26JUN2025: "0xbf5e60ddf654085f80dae9dd33ec0e345773e1f8",
+   
+  },
+  
 };
 
 
@@ -145,11 +155,6 @@ export const assets: Assets = {
       oracle: "chainlink",
     },
     {
-      token: "XVS",
-      address: "0xc1Eb7689147C81aC840d4FF0D298489fc7986d52",
-      oracle: "redstone",
-    },
-    {
       token: "wstETH",
       address: "0x5979D7b546E38E414F7E9822514be443A4800529",
       oracle: "chainlink",
@@ -159,14 +164,24 @@ export const assets: Assets = {
       address: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe",
       oracle: "chainlink",
     },
+    {
+      token: "PT-weETH-26JUN2025",
+      address: "0xb33808ea0e883138680ba29311a220a7377cdb92",
+      oracle: "pendle",
+      market: "PTweETH_26JUN2025",
+      correlatedTo: "weETH",
+
+    },
   ],
 };
 
 export const getOraclesData = async (): Promise<Oracles> => {
-  const chainlinkOracle = await ethers.getContractOrNull("ChainlinkOracle");
-  const redstoneOracle = await ethers.getContractOrNull("RedStoneOracle");
+  const chainlinkOracle = await ethers.getContractOrNull("SequencerChainlinkOracle"); //SequencerChainlinkOracle or ChainlinkOracle depending of L1 or L2
+  //const redstoneOracle = await ethers.getContractOrNull("RedStoneOracle");
+  const pendlePTOracle = await ethers.getContractOrNull("PendlePtOracle");
   //const binanceOracle = await ethers.getContractOrNull("BinanceOracle");
   //const pythOracle = await ethers.getContractOrNull("PythOracle");
+
 
   const oraclesData: Oracles = {
     ...(chainlinkOracle
@@ -192,34 +207,34 @@ export const getOraclesData = async (): Promise<Oracles> => {
           },
         }
       : {}),
-    ...(redstoneOracle
-      ? {
-          redstone: {
-            oracles: [redstoneOracle.address, addr0000, addr0000],
-            enableFlagsForOracles: [true, false, false],
-            underlyingOracle: redstoneOracle,
-            getTokenConfig: (asset: Asset, name: string) => ({
-              asset: asset.address,
-              feed: redstoneFeed[name][asset.token],
-              maxStalePeriod: asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD,
-            }),
-          },
-        }
-      : {}),
-      // ...(PendleOracle
-      //   ? {
-      //       pendle: {
-      //         oracles: [pendleOracle.address, addr0000, addr0000],
-      //         enableFlagsForOracles: [true, false, false],
-      //         underlyingOracle: redstoneOracle,
-      //         getTokenConfig: (asset: Asset, name: string) => ({
-      //           asset: asset.address,
-      //           feed: pendleFeed[name][asset.token],
-      //           maxStalePeriod: asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD,
-      //         }),
-      //       },
-      //     }
-      //   : {}),
+    // ...(redstoneOracle
+    //   ? {
+    //       redstone: {
+    //         oracles: [redstoneOracle.address, addr0000, addr0000],
+    //         enableFlagsForOracles: [true, false, false],
+    //         underlyingOracle: redstoneOracle,
+    //         getTokenConfig: (asset: Asset, name: string) => ({
+    //           asset: asset.address,
+    //           feed: redstoneFeed[name][asset.token],
+    //           maxStalePeriod: asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD,
+    //         }),
+    //       },
+    //     }
+    //   : {}),
+      ...(pendlePTOracle
+        ? {
+            pendle: {
+              oracles: [pendlePTOracle.address, addr0000, addr0000],
+              enableFlagsForOracles: [true, false, false],
+              underlyingOracle: pendlePTOracle,
+              getTokenConfig: (asset: Asset, name: string) => ({
+                asset: asset.address,
+                market: asset.market,
+                underlyingToken: asset.correlatedTo,
+              }),
+            },
+          }
+        : {}),
     // ...(binanceOracle
     //   ? {
     //       binance: {

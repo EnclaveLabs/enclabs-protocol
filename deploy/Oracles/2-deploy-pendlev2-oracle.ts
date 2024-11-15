@@ -36,7 +36,10 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
       },
     },
   });
-
+  const PendlePtOracle = await hre.ethers.getContract("PendlePtOracle");
+  let accessControlManager;
+  accessControlManager = await hre.ethers.getContract("AccessControlManager");
+  await accessControlManager?.giveCallPermission(PendlePtOracle.address, "setTokenConfig(TokenConfig)", deployer);
   // const pendlePtOracle = await hre.ethers.getContract("PendlePtOracle");
   // const pendlePtOracleOwner = await pendlePtOracle.owner();
 

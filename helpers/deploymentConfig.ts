@@ -254,6 +254,14 @@ export const globalConfig: NetworkConfig = {
         decimals: 18,
         tokenAddress: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe",
       },
+      {
+        isMock: false,
+        name: "PT weETH 26JUN2025",
+        symbol: "PT-weETH-26JUN2025",
+        decimals: 18,
+        tokenAddress: "0xb33808ea0e883138680BA29311a220A7377cdb92na na",
+      },
+      
     ],
     poolConfig: [
       {
@@ -415,6 +423,73 @@ export const globalConfig: NetworkConfig = {
             markets: ["wstETH", "weETH", "WETH"],
             supplySpeeds: ["0", "0", "0"],
             borrowSpeeds: ["0", "0", "0"],
+          },
+        ],
+      },
+      {
+        id: "Pendle",
+        name: "Pendle",
+        closeFactor: convertToUnit("0.5", 18),
+        liquidationIncentive: convertToUnit("1.1", 18),
+        minLiquidatableCollateral: convertToUnit("100", 18),
+        vtokens: [
+          
+          {
+            name: "Venus WETH (Pendle)",
+            asset: "WETH",
+            symbol: "vWETH_Pendle",
+            rateModel: InterestRateModels.JumpRate.toString(),
+            baseRatePerYear: "0",
+            multiplierPerYear: convertToUnit("0.025", 18),
+            jumpMultiplierPerYear: convertToUnit("1.5", 18),
+            kink_: convertToUnit("0.2", 18),
+            collateralFactor: convertToUnit("0.75", 18),
+            liquidationThreshold: convertToUnit("0.80", 18),
+            reserveFactor: convertToUnit("0.2", 18),
+            initialSupply: convertToUnit("0.001", 18), 
+            supplyCap: convertToUnit("26000", 18),
+            borrowCap: convertToUnit("23500", 18),
+            reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_ARBITRUM_ONE,
+            vTokenReceiver: preconfiguredAddresses.arbitrumone.VTreasury,
+          },
+          {
+            name: "Enclabs PT-weETH-26JUN2025 (Pendle)",
+            asset: "PT-weETH-26JUN2025",
+            symbol: "vPT-weETH-26JUN2025_Pendle",
+            rateModel: InterestRateModels.JumpRate.toString(),
+            baseRatePerYear: "0",
+            multiplierPerYear: convertToUnit("0.08", 18),
+            jumpMultiplierPerYear: convertToUnit("2.5", 18),
+            kink_: convertToUnit("0.8", 18),
+            collateralFactor: convertToUnit("0.78", 18),
+            liquidationThreshold: convertToUnit("0.80", 18),
+            reserveFactor: convertToUnit("0.1", 18),
+            initialSupply: convertToUnit("0.001", 18), 
+            supplyCap: convertToUnit("54000000", 6),
+            borrowCap: convertToUnit("49000000", 6),
+            reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_ARBITRUM_ONE,
+            vTokenReceiver: preconfiguredAddresses.arbitrumone.VTreasury,
+          },
+         
+          
+        ],
+        rewards: [
+          // XVS Rewards Over 90 days (7776000 seconds)
+          // WETH:    510 XVS for Suppliers
+          //          765 XVS for Borrowers
+          // WBTC:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // USDT:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // USDC:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // ARB:     510 XVS for Suppliers
+          //          765 XVS for Borrowers
+          {
+            asset: "USDT",
+            markets: ["WETH", "PT-weETH-26JUN2025"],
+            supplySpeeds: ["0", "0"],
+            borrowSpeeds: ["0", "0"],
           },
         ],
       },
