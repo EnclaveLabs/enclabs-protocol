@@ -157,19 +157,21 @@ export const assets: Assets = {
     {
       token: "wstETH",
       address: "0x5979D7b546E38E414F7E9822514be443A4800529",
-      oracle: "chainlink",
+      oracle: "onejumpchainlink",
+      correlatedTo: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
     },
     {
       token: "weETH",
       address: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe",
-      oracle: "chainlink",
+      oracle: "onejumpchainlink",
+      correlatedTo: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
     },
     {
       token: "PT-weETH-26JUN2025",
       address: "0xb33808ea0e883138680ba29311a220a7377cdb92",
       oracle: "pendle",
-      market: "PTweETH_26JUN2025",
-      correlatedTo: "weETH",
+      market: "0xbf5e60ddf654085f80dae9dd33ec0e345773e1f8",
+      correlatedTo: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe", //weETH address, not pricefeed
 
     },
   ],
@@ -179,6 +181,7 @@ export const getOraclesData = async (): Promise<Oracles> => {
   const chainlinkOracle = await ethers.getContractOrNull("SequencerChainlinkOracle"); //SequencerChainlinkOracle or ChainlinkOracle depending of L1 or L2
   //const redstoneOracle = await ethers.getContractOrNull("RedStoneOracle");
   const pendlePTOracle = await ethers.getContractOrNull("PendlePtOracle");
+  const onejumpchainlinkOracle = await ethers.getContractOrNull("OneJumpOracleV2");
   //const binanceOracle = await ethers.getContractOrNull("BinanceOracle");
   //const pythOracle = await ethers.getContractOrNull("PythOracle");
 
@@ -207,6 +210,21 @@ export const getOraclesData = async (): Promise<Oracles> => {
           },
         }
       : {}),
+      ...(onejumpchainlinkOracle
+        ? {
+            onejumpchainlink: {
+              oracles: [onejumpchainlinkOracle.address, addr0000, addr0000],
+              enableFlagsForOracles: [true, false, false],
+              underlyingOracle: onejumpchainlinkOracle,
+              getTokenConfig: (asset: Asset, name: string) => ({
+                asset: asset.address,
+                feed: chainlinkFeed[name][asset.token],
+                underlyingAsset: asset.correlatedTo,
+                maxStalePeriod: asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD,
+              }),
+            },
+          }
+        : {}),
     // ...(redstoneOracle
     //   ? {
     //       redstone: {

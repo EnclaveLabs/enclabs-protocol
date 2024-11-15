@@ -30,8 +30,7 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
   //const binanceOracle = await hre.ethers.getContractOrNull("BinanceOracle");
   const pendlePTOracle = await hre.ethers.getContractOrNull("PendlePtOracle");
   const chainlinkOracle = await hre.ethers.getContractOrNull("ChainlinkOracleSequencer"); //SequencerChainlinkOracle or ChainlinkOracle depending of L1 or L2
-
- 
+  const oneJumpOracle = await hre.ethers.getContractOrNull("OneJumpOracleV2");
   const oraclesData: Oracles = await getOraclesData();
   const commands: GovernanceCommand[] = [];
 
@@ -50,13 +49,14 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
       commands.push({
         contract: oraclesData[oracle].underlyingOracle.address,
         signature: "setDirectPrice(address,uint256)",
-        argTypes: ["address[]", "uint256[]"],
+        argTypes: ["address", "uint256"],
         value: 0,
         parameters: [assetConfig.asset, assetConfig.price],
       });
     }
 
-    if (oraclesData[oracle].underlyingOracle.address !== pendlePTOracle?.address && getTokenConfig !== undefined) {
+    if (oraclesData[oracle].underlyingOracle.address === chainlinkOracle?.address  && getTokenConfig !== undefined &&
+      getDirectPriceConfig === undefined) {
       const tokenConfig: any = getTokenConfig(asset, networkName);
       commands.push({
         contract: oraclesData[oracle].underlyingOracle.address,
@@ -66,8 +66,27 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
         parameters: [[tokenConfig.asset, tokenConfig.feed, tokenConfig.maxStalePeriod]],
       });
     }
+    if (oraclesData[oracle].underlyingOracle.address === oneJumpOracle?.address && getTokenConfig !== undefined) {
+      const tokenConfig: any = getTokenConfig(asset, networkName);
+      commands.push({
+        contract: oraclesData[oracle].underlyingOracle.address,
+        signature: "setTokenConfig((address,address,address,uint256))",
+        argTypes: ["tuple(address,address,address,uint256)"],
+        value: 0,
+        parameters: [[tokenConfig.asset, tokenConfig.feed, tokenConfig.underlyingAsset ,tokenConfig.maxStalePeriod]],
+      });
+    }
+    // if (oraclesData[oracle].underlyingOracle.address !== pendlePTOracle?.address && getTokenConfig !== undefined ) {
+    //   const tokenConfig: any = getTokenConfig(asset, networkName);
+    //   commands.push({
+    //     contract: oraclesData[oracle].underlyingOracle.address,
+    //     signature: "setTokenConfig((address,address,address))",
+    //     argTypes: ["tuple(address,address,address)"],
+    //     value: 0,
+    //     parameters: [[tokenConfig.asset, tokenConfig.market, tokenConfig.underlyingToken]],
+    //   });
+    // }
     if (oraclesData[oracle].underlyingOracle.address === pendlePTOracle?.address && getTokenConfig !== undefined) {
-      console.log("here!!!!!!!!!!");
       const tokenConfig: any = getTokenConfig(asset, networkName);
       commands.push({
         contract: oraclesData[oracle].underlyingOracle.address,
@@ -95,7 +114,7 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
     commands.push({
       contract: resilientOracle.address,
       signature: "setTokenConfig((address,address[3],bool[3]))",
-      argTypes: ["tuple(address,address[],bool[])"],
+      argTypes: ["tuple(address,address[3],bool[3])"],
       value: 0,
       parameters: [[asset.address, oraclesData[oracle].oracles, oraclesData[oracle].enableFlagsForOracles]],
     });
