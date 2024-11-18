@@ -83,7 +83,7 @@ export const getUnregisteredVTokens = async (
     poolConfig.map(async (pool: PoolConfig) => {
       const isRegistered = await Promise.all(
         pool.vtokens.map(async (vTokenConfig: VTokenConfig) => {
-          const vToken = await deployments.getOrNull(`VToken_${vTokenConfig.name}`);
+          const vToken = await deployments.getOrNull(`VToken_${vTokenConfig.symbol}`);
           if (!vToken) {
             // If the VToken deployment doesn't exist, it's not registered
             return false;
