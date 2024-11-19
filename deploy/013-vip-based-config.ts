@@ -86,11 +86,18 @@ const configureRewards = async (
         rewards.map(async (rewardConfig: RewardConfig, idx: number) => {
           const contractName = `RewardsDistributor_${pool.id}_${idx}`;
           const rewardsDistributor = await ethers.getContract<RewardsDistributor>(contractName);
-          return [
-            //...(await acceptOwnership(contractName, owner, hre)), // TOFIX
-            await addRewardsDistributor(rewardsDistributor, pool, rewardConfig),
-            await setRewardSpeed(pool, rewardsDistributor, rewardConfig),
-          ];
+          const comptroller = await ethers.getContract(`Comptroller_${pool.id}`);
+          const comptrollerContract = await ethers.getContractAt<Comptroller>("Comptroller", comptroller.address);
+          const registredRewardsDistributors = await comptrollerContract.getRewardDistributors();
+          
+          if(!registredRewardsDistributors.includes(rewardsDistributor.address)){
+            return [
+              //...(await acceptOwnership(contractName, owner, hre)), // TOFIX
+              await addRewardsDistributor(rewardsDistributor, pool, rewardConfig),
+              await setRewardSpeed(pool, rewardsDistributor, rewardConfig),
+            ];
+          }
+          return [];
         }),
       );
       return poolCommands.flat();
@@ -381,8 +388,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   //const owner = preconfiguredAddresses.NormalTimelock || deployer; //TOFIX
   const owner =  deployer; //tofix should be timelock
   const commands = [
-    //...(await configureAccessControls(deploymentConfig, hre)), TOFIX uncomment for new instance
-    ...(await acceptOwnership("PoolRegistry", owner, hre)),
+    //...(await configureAccessControls(deploymentConfig, hre)), // once TOFIX uncomment for new instance
+    //...(await acceptOwnership("PoolRegistry", owner, hre)), //once
     ...(await addPools(unregisteredPools, owner, hre)),
     ...(await addMarkets(unregisteredVTokens, deploymentConfig, hre)),
     ...(await configureRewards(unregisteredRewardsDistributors, owner, hre)),
