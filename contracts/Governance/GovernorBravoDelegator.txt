@@ -3,21 +3,21 @@ pragma experimental ABIEncoderV2;
 
 import "./GovernorBravoInterfaces.sol";
 
+
 /**
  * @title GovernorBravoDelegator
  * @author Venus
  * @notice The `GovernorBravoDelegator` contract.
  */
 contract GovernorBravoDelegator is GovernorBravoDelegatorStorage, GovernorBravoEvents {
+    
     constructor(
-        address timelock_,
         address eclVault_,
-        address admin_,
+        Proposal[] memory proposalConfigs_,
+        TimelockInterface[] memory timelocks_,
+        address guardian_,
         address implementation_,
-        uint votingPeriod_,
-        uint votingDelay_,
-        uint proposalThreshold_,
-        address guardian_
+        address admin_
     ) public {
         // Admin set to msg.sender for initialization
         admin = msg.sender;
@@ -25,12 +25,10 @@ contract GovernorBravoDelegator is GovernorBravoDelegatorStorage, GovernorBravoE
         delegateTo(
             implementation_,
             abi.encodeWithSignature(
-                "initialize(address,address,uint256,uint256,uint256,address)",
-                timelock_,
+                "initialize(address,tuple(uint256,uint256,uint256)[],tuple(address,address,address)[],address)",
                 eclVault_,
-                votingPeriod_,
-                votingDelay_,
-                proposalThreshold_,
+                proposalConfigs_,
+                timelocks_,
                 guardian_
             )
         );

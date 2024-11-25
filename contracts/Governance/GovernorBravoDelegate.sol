@@ -1,8 +1,55 @@
-pragma solidity ^0.5.16;
+pragma solidity 0.8.25;
 pragma experimental ABIEncoderV2;
 
-import "./GovernorBravoInterfaces.sol";
+import { Ownable2StepUpgradeable } from "@openzeppelin/contracts-upgradeable/access/Ownable2StepUpgradeable.sol";
 
+/**
+ * @title TimelockInterface
+ * @author Venus
+ * @notice Interface implemented by the Timelock contract.
+ */
+interface TimelockInterface {
+    function delay() external view returns (uint);
+
+    function GRACE_PERIOD() external view returns (uint);
+
+    function acceptOwner() external;
+
+    function queuedTransactions(bytes32 hash) external view returns (bool);
+
+    function queueTransaction(
+        address target,
+        uint value,
+        string calldata signature,
+        bytes calldata data,
+        uint eta
+    ) external returns (bytes32);
+
+    function cancelTransaction(
+        address target,
+        uint value,
+        string calldata signature,
+        bytes calldata data,
+        uint eta
+    ) external;
+
+    function executeTransaction(
+        address target,
+        uint value,
+        string calldata signature,
+        bytes calldata data,
+        uint eta
+    ) external payable returns (bytes memory);
+}
+
+interface EclVaultInterface {
+    function getPriorVotes(address account, uint blockNumber) external view returns (uint96);
+}
+
+interface GovernorAlphaInterface {
+    /// @notice The total number of proposals
+    function proposalCount() external returns (uint);
+}
 /**
  * @title GovernorBravoDelegate
  * @notice Venus Governance latest on chain governance includes several new features including variable proposal routes and fine grained pause control.
@@ -70,7 +117,94 @@ import "./GovernorBravoInterfaces.sol";
  * The delegation of votes happens through the `ECLVault` contract by calling the `delegate` or `delegateBySig` functions. These same functions can revert
  * vote delegation by calling the same function with a value of `0`.
  */
-contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoEvents {
+contract GovernorBravoDelegate {
+    /// @notice Initial proposal id set at become
+    uint public initialProposalId;
+
+    /// @notice The total number of proposals
+    uint public proposalCount;
+
+    /// @notice The address of the Venus Protocol Timelock
+    TimelockInterface public timelock;
+
+    /// @notice The address of the Venus governance token
+    EclVaultInterface public eclVault;
+
+    /// @notice The official record of all proposals ever proposed
+    mapping(uint => Proposal) public proposals;
+
+    /// @notice The latest proposal for each proposer
+    mapping(address => uint) public latestProposalIds;
+
+    struct Proposal {
+        /// @notice Unique id for looking up a proposal
+        uint id;
+        /// @notice Creator of the proposal
+        address proposer;
+        /// @notice The timestamp that the proposal will be available for execution, set once the vote succeeds
+        uint eta;
+        /// @notice the ordered list of target addresses for calls to be made
+        address[] targets;
+        /// @notice The ordered list of values (i.e. msg.value) to be passed to the calls to be made
+        uint[] values;
+        /// @notice The ordered list of function signatures to be called
+        string[] signatures;
+        /// @notice The ordered list of calldata to be passed to each call
+        bytes[] calldatas;
+        /// @notice The block at which voting begins: holders must delegate their votes prior to this block
+        uint startBlock;
+        /// @notice The block at which voting ends: votes must be cast prior to this block
+        uint endBlock;
+        /// @notice Current number of votes in favor of this proposal
+        uint forVotes;
+        /// @notice Current number of votes in opposition to this proposal
+        uint againstVotes;
+        /// @notice Current number of votes for abstaining for this proposal
+        uint abstainVotes;
+        /// @notice Flag marking whether the proposal has been canceled
+        bool canceled;
+        /// @notice Flag marking whether the proposal has been executed
+        bool executed;
+        /// @notice Receipts of ballots for the entire set of voters
+        mapping(address => Receipt) receipts;
+        /// @notice The type of the proposal
+        uint8 proposalType;
+    }
+
+    /// @notice Ballot receipt record for a voter
+    struct Receipt {
+        /// @notice Whether or not a vote has been cast
+        bool hasVoted;
+        /// @notice Whether or not the voter supports the proposal or abstains
+        uint8 support;
+        /// @notice The number of votes the voter had, which were cast
+        uint96 votes;
+    }
+
+    /// @notice Possible states that a proposal may be in
+    enum ProposalState {
+        Pending,
+        Active,
+        Canceled,
+        Defeated,
+        Succeeded,
+        Queued,
+        Expired,
+        Executed
+    }
+
+    /// @notice The maximum number of actions that can be included in a proposal
+    uint public proposalMaxOperations;
+
+    /// @notice A privileged role that can cancel any proposal
+    address public guardian;
+
+    /// @notice Owneristrator for this contract
+    address public owner;
+
+    /// @notice Pending owner for this contract
+    address public pendingOwner;
+
     /// @notice The name of this contract
     string public constant name = "Enclabs Governor Bravo";
 
@@ -102,6 +236,81 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
     /// @notice The EIP-712 typehash for the ballot struct used by the contract
     bytes32 public constant BALLOT_TYPEHASH = keccak256("Ballot(uint256 proposalId,uint8 support)");
 
+     enum ProposalType {
+        NORMAL,
+        FASTTRACK,
+        CRITICAL
+    }
+
+    struct ProposalConfig {
+        /// @notice The delay before voting on a proposal may take place, once proposed, in blocks
+        uint256 votingDelay;
+        /// @notice The duration of voting on a proposal, in blocks
+        uint256 votingPeriod;
+        /// @notice The number of votes required in order for a voter to become a proposer
+        uint256 proposalThreshold;
+    }
+
+    /// @notice mapping containing configuration for each proposal type
+    mapping(uint => ProposalConfig) public proposalConfigs;
+
+    /// @notice mapping containing Timelock addresses for each proposal type
+    mapping(uint => TimelockInterface) public proposalTimelocks;
+
+/// @notice An event emitted when a new proposal is created
+    event ProposalCreated(
+        uint id,
+        address proposer,
+        address[] targets,
+        uint[] values,
+        string[] signatures,
+        bytes[] calldatas,
+        uint startBlock,
+        uint endBlock,
+        string description,
+        uint8 proposalType
+    );
+
+    /// @notice An event emitted when a vote has been cast on a proposal
+    /// @param voter The address which casted a vote
+    /// @param proposalId The proposal id which was voted on
+    /// @param support Support value for the vote. 0=against, 1=for, 2=abstain
+    /// @param votes Number of votes which were cast by the voter
+    /// @param reason The reason given for the vote by the voter
+    event VoteCast(address indexed voter, uint proposalId, uint8 support, uint votes, string reason);
+
+    /// @notice An event emitted when a proposal has been canceled
+    event ProposalCanceled(uint id);
+
+    /// @notice An event emitted when a proposal has been queued in the Timelock
+    event ProposalQueued(uint id, uint eta);
+
+    /// @notice An event emitted when a proposal has been executed in the Timelock
+    event ProposalExecuted(uint id);
+
+    /// @notice An event emitted when the voting delay is set
+    event VotingDelaySet(uint oldVotingDelay, uint newVotingDelay);
+
+    /// @notice An event emitted when the voting period is set
+    event VotingPeriodSet(uint oldVotingPeriod, uint newVotingPeriod);
+
+    /// @notice Emitted when implementation is changed
+    event NewImplementation(address oldImplementation, address newImplementation);
+
+    /// @notice Emitted when proposal threshold is set
+    event ProposalThresholdSet(uint oldProposalThreshold, uint newProposalThreshold);
+
+    /// @notice Emitted when pendingOwner is changed
+    event NewPendingOwner(address oldPendingOwner, address newPendingOwner);
+
+    /// @notice Emitted when pendingOwner is accepted, which means owner is updated
+    event NewOwner(address oldOwner, address newOwner);
+
+    /// @notice Emitted when the new guardian address is set
+    event NewGuardian(address oldGuardian, address newGuardian);
+
+    /// @notice Emitted when the maximum number of operations in one proposal is updated
+    event ProposalMaxOperationsUpdated(uint oldMaxOperations, uint newMaxOperations);
     /**
      * @notice Used to initialize the contract during delegator contructor
      * @param eclVault_ The address of the EclVault
@@ -115,7 +324,7 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
         address guardian_
     ) public {
         require(address(proposalTimelocks[0]) == address(0), "GovernorBravo::initialize: cannot initialize twice");
-        require(msg.sender == admin, "GovernorBravo::initialize: admin only");
+        
         require(eclVault_ != address(0), "GovernorBravo::initialize: invalid ecl address");
         require(guardian_ != address(0), "GovernorBravo::initialize: invalid guardian");
         require(
@@ -126,7 +335,7 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
             proposalConfigs_.length == uint8(ProposalType.CRITICAL) + 1,
             "GovernorBravo::initialize:number of proposal configs should match number of governance routes"
         );
-
+        owner = msg.sender;
         eclVault = EclVaultInterface(eclVault_);
         proposalMaxOperations = 10;
         guardian = guardian_;
@@ -219,29 +428,67 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
         uint endBlock = add256(startBlock, proposalConfigs[uint8(proposalType)].votingPeriod);
 
         proposalCount++;
-        Proposal memory newProposal = Proposal({
-            id: proposalCount,
-            proposer: msg.sender,
-            eta: 0,
-            targets: targets,
-            values: values,
-            signatures: signatures,
-            calldatas: calldatas,
-            startBlock: startBlock,
-            endBlock: endBlock,
-            forVotes: 0,
-            againstVotes: 0,
-            abstainVotes: 0,
-            canceled: false,
-            executed: false,
-            proposalType: uint8(proposalType)
-        });
+        
+        // Proposal memory newProposal = Proposal({
+        //     id: proposalCount,
+        //     proposer: msg.sender,
+        //     eta: 0,
+        //     targets: targets,
+        //     values: values,
+        //     signatures: signatures,
+        //     calldatas: calldatas,
+        //     startBlock: startBlock,
+        //     endBlock: endBlock,
+        //     forVotes: 0,
+        //     againstVotes: 0,
+        //     abstainVotes: 0,
+        //     canceled: false,
+        //     executed: false,
+        //     proposalType: uint8(proposalType)
+        // });
+        
 
-        proposals[newProposal.id] = newProposal;
-        latestProposalIds[newProposal.proposer] = newProposal.id;
+        //proposals[newProposal.id] = newProposal;
+        //latestProposalIds[newProposal.proposer] = newProposal.id;
+        
+        
+        // proposals[proposalCount] = Proposal({
+        //     id: proposalCount,
+        //     proposer: msg.sender,
+        //     eta: 0,
+        //     targets: targets,
+        //     values: values,
+        //     signatures: signatures,
+        //     calldatas: calldatas,
+        //     startBlock: startBlock,
+        //     endBlock: endBlock,
+        //     forVotes: 0,
+        //     againstVotes: 0,
+        //     abstainVotes: 0,
+        //     canceled: false,
+        //     executed: false,
+        //     proposalType: uint8(proposalType)
+        // });
+        proposals[proposalCount].id = proposalCount;
+        proposals[proposalCount].proposer = msg.sender;
+        proposals[proposalCount].eta = 0;
+        proposals[proposalCount].targets = targets;
+        proposals[proposalCount].values = values;
+        proposals[proposalCount].signatures = signatures;
+        proposals[proposalCount].calldatas = calldatas;
+        proposals[proposalCount].startBlock = startBlock;
+        proposals[proposalCount].endBlock = endBlock;
+        proposals[proposalCount].forVotes = 0;
+        proposals[proposalCount].againstVotes = 0;
+        proposals[proposalCount].abstainVotes = 0;
+        proposals[proposalCount].canceled = false;
+        proposals[proposalCount].executed = false;
+        proposals[proposalCount].proposalType = uint8(proposalType);
+
+        latestProposalIds[proposals[proposalCount].proposer] = proposalCount;
 
         emit ProposalCreated(
-            newProposal.id,
+            proposalCount,
             msg.sender,
             targets,
             values,
@@ -252,7 +499,7 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
             description,
             uint8(proposalType)
         );
-        return newProposal.id;
+        return proposalCount;
     }
 
     /**
@@ -353,7 +600,7 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
     /**
      * @notice Gets actions of a proposal
      * @param proposalId the id of the proposal
-     * @return targets, values, signatures, and calldatas of the proposal actions
+     * 
      */
     function getActions(
         uint proposalId
@@ -370,7 +617,7 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
      * @notice Gets the receipt for a voter on a given proposal
      * @param proposalId the id of proposal
      * @param voter The address of the voter
-     * @return The voting receipt
+     * @return address 
      */
     function getReceipt(uint proposalId, address voter) external view returns (Receipt memory) {
         return proposals[proposalId].receipts[voter];
@@ -379,7 +626,7 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
     /**
      * @notice Gets the state of a proposal
      * @param proposalId The id of the proposal
-     * @return Proposal state
+     * @return ProposalState
      */
     function state(uint proposalId) public view returns (ProposalState) {
         require(
@@ -482,7 +729,7 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
      * @param newGuardian the address of the new guardian
      */
     function _setGuardian(address newGuardian) external {
-        require(msg.sender == guardian || msg.sender == admin, "GovernorBravo::_setGuardian: admin or guardian only");
+        require(msg.sender == guardian || msg.sender == owner, "GovernorBravo::_setGuardian: owner or guardian only");
         require(newGuardian != address(0), "GovernorBravo::_setGuardian: cannot live without a guardian");
         address oldGuardian = guardian;
         guardian = newGuardian;
@@ -492,26 +739,26 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
 
     /**
      * @notice Initiate the GovernorBravo contract
-     * @dev Admin only. Sets initial proposal id which initiates the contract, ensuring a continuous proposal id count
+     * @dev Owner only. Sets initial proposal id which initiates the contract, ensuring a continuous proposal id count
      * @param governorAlpha The address for the Governor to continue the proposal id count from
      */
     function _initiate(address governorAlpha) external {
-        require(msg.sender == admin, "GovernorBravo::_initiate: admin only");
+        require(msg.sender == owner, "GovernorBravo::_initiate: owner only");
         require(initialProposalId == 0, "GovernorBravo::_initiate: can only initiate once");
         proposalCount = GovernorAlphaInterface(governorAlpha).proposalCount();
         initialProposalId = proposalCount;
         for (uint256 i; i < uint8(ProposalType.CRITICAL) + 1; ++i) {
-            proposalTimelocks[i].acceptAdmin();
+            proposalTimelocks[i].acceptOwner();
         }
     }
 
     /**
      * @notice Set max proposal operations
-     * @dev Admin only.
+     * @dev Owner only.
      * @param proposalMaxOperations_ Max proposal operations
      */
     function _setProposalMaxOperations(uint proposalMaxOperations_) external {
-        require(msg.sender == admin, "GovernorBravo::_setProposalMaxOperations: admin only");
+        require(msg.sender == owner, "GovernorBravo::_setProposalMaxOperations: owner only");
         uint oldProposalMaxOperations = proposalMaxOperations;
         proposalMaxOperations = proposalMaxOperations_;
 
@@ -519,47 +766,47 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
     }
 
     /**
-     * @notice Begins transfer of admin rights. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.
-     * @dev Admin function to begin change of admin. The newPendingAdmin must call `_acceptAdmin` to finalize the transfer.
-     * @param newPendingAdmin New pending admin.
+     * @notice Begins transfer of owner rights. The newPendingOwner must call `_acceptOwner` to finalize the transfer.
+     * @dev Owner function to begin change of owner. The newPendingOwner must call `_acceptOwner` to finalize the transfer.
+     * @param newPendingOwner New pending owner.
      */
-    function _setPendingAdmin(address newPendingAdmin) external {
-        // Check caller = admin
-        require(msg.sender == admin, "GovernorBravo:_setPendingAdmin: admin only");
+    function _setPendingOwner(address newPendingOwner) external {
+        // Check caller = owner
+        require(msg.sender == owner, "GovernorBravo:_setPendingOwner: owner only");
 
         // Save current value, if any, for inclusion in log
-        address oldPendingAdmin = pendingAdmin;
+        address oldPendingOwner = pendingOwner;
 
-        // Store pendingAdmin with value newPendingAdmin
-        pendingAdmin = newPendingAdmin;
+        // Store pendingOwner with value newPendingOwner
+        pendingOwner = newPendingOwner;
 
-        // Emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin)
-        emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin);
+        // Emit NewPendingOwner(oldPendingOwner, newPendingOwner)
+        emit NewPendingOwner(oldPendingOwner, newPendingOwner);
     }
 
     /**
-     * @notice Accepts transfer of admin rights. msg.sender must be pendingAdmin
-     * @dev Admin function for pending admin to accept role and update admin
+     * @notice Accepts transfer of owner rights. msg.sender must be pendingOwner
+     * @dev Owner function for pending owner to accept role and update owner
      */
-    function _acceptAdmin() external {
-        // Check caller is pendingAdmin and pendingAdmin ≠ address(0)
+    function _acceptOwner() external {
+        // Check caller is pendingOwner and pendingOwner ≠ address(0)
         require(
-            msg.sender == pendingAdmin && msg.sender != address(0),
-            "GovernorBravo:_acceptAdmin: pending admin only"
+            msg.sender == pendingOwner && msg.sender != address(0),
+            "GovernorBravo:_acceptOwner: pending owner only"
         );
 
         // Save current values for inclusion in log
-        address oldAdmin = admin;
-        address oldPendingAdmin = pendingAdmin;
+        address oldOwner = owner;
+        address oldPendingOwner = pendingOwner;
 
-        // Store admin with value pendingAdmin
-        admin = pendingAdmin;
+        // Store owner with value pendingOwner
+        owner = pendingOwner;
 
         // Clear the pending value
-        pendingAdmin = address(0);
+        pendingOwner = address(0);
 
-        emit NewAdmin(oldAdmin, admin);
-        emit NewPendingAdmin(oldPendingAdmin, pendingAdmin);
+        emit NewOwner(oldOwner, owner);
+        emit NewPendingOwner(oldPendingOwner, pendingOwner);
     }
 
     function add256(uint256 a, uint256 b) internal pure returns (uint) {
@@ -573,7 +820,7 @@ contract GovernorBravoDelegate is GovernorBravoDelegateStorageV2, GovernorBravoE
         return a - b;
     }
 
-    function getChainIdInternal() internal pure returns (uint) {
+    function getChainIdInternal() internal view returns (uint) {
         uint chainId;
         assembly {
             chainId := chainid()

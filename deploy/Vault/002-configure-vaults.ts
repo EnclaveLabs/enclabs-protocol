@@ -40,7 +40,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await eclVaultProxyDeployment._setPendingImplementation(eclVault.address);
   await eclVault._become(eclVaultProxyDeployment.address);
 
-  eclVault = await ethers.getContractAt("ECLVault", eclVaultProxyDeployment.address);
+   eclVault = await ethers.getContractAt("ECLVault", eclVaultProxyDeployment.address);
 
   let txn = await eclVault.initializeTimeManager(isTimeBased, blocksPerYear[network.name]);
   await txn.wait();
@@ -77,6 +77,24 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     txn = await eclStoreDeployment.setPendingAdmin(owner);
     await txn.wait();
+
+//TOFIX should be timelock
+    const tx = await accessControlManager.giveCallPermission(
+        ethers.constants.AddressZero,
+        "add(address,uint256,address,uint256,uint256)",
+        deployer,
+      );
+      await tx.wait();
+  
+      // Add token pool to ecl vault
+      const allocPoint = 100;
+      const token = ecl.address;
+      const rewardToken = ecl.address;
+      const rewardPerBlock = "61805555555555555";
+      const lockPeriod = 3600;
+  
+      await eclVault.add(rewardToken, allocPoint, token, rewardPerBlock, lockPeriod);
+
   }
 };
 
