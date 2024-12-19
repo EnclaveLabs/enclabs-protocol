@@ -343,7 +343,7 @@ export const globalConfig: NetworkConfig = {
           {
             asset: "USDT",
             markets: ["WETH", "USDT", "USDC"],
-            supplySpeeds: ["655864197530", "1311728395061", "1311728395061"],
+            supplySpeeds: ["655864197530", "1311728395061", "1311728395061"], //careful with decimals
             borrowSpeeds: ["983796296296", "1967592592592", "1967592592592"],
           },
         ],

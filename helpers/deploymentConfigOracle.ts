@@ -9,7 +9,7 @@
 // import zksyncsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/zksyncsepolia.json";
 // import mainnetDeployments from "@venusprotocol/venus-protocol/deployments/bscmainnet.json";
 // import testnetDeployments from "@venusprotocol/venus-protocol/deployments/bsctestnet.json";
-import { Contract } from "ethers";
+import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
 import { contracts as governanceArbitrumOne } from "../deployments/arbitrumone.json";
 export interface Feed {
@@ -28,6 +28,18 @@ export interface Asset {
   stalePeriod?: number;
   market?: string;
   correlatedTo?: string;
+  baseUnit?: BigNumber;
+  uniswapPool?: string;
+  isEthBased?: boolean;
+  isReversedPool?: boolean;
+  anchorPeriod?: number;
+  tokenA?: string;
+  tokenB?: string;
+  fee?: number;
+  twapWindow?: number;
+  baseToken?: string;
+  quoteToken?: string;
+  pool?: string;
 }
 
 export interface Assets {
@@ -84,7 +96,11 @@ export const ADDRESSES: PreconfiguredAddresses = {
     WETH: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
     PTweETH_26JUN2025: "0xb33808ea0e883138680ba29311a220a7377cdb92",
     PTweETH_26JUN2025_Market: "0xbf5e60ddf654085f80dae9dd33ec0e345773e1f8",
-    PTOracle: "0x9a9fa8338dd5e5b2188006f1cd2ef26d921650c2"
+    PTOracle: "0x9a9fa8338dd5e5b2188006f1cd2ef26d921650c2",
+    WETHAddress: "0x82af49447d8a07e3bd95bd0d56f35241523fbab1",
+    PendleWethUniV3Pool: "0xdbaeB7f0DFe3a0AAFD798CCECB5b22E708f7852c",
+    UniswapV3Factory: "0x1F98431c8aD98523631AE4a59f267346ea31F984",
+    
   },
 };
 
@@ -174,6 +190,30 @@ export const assets: Assets = {
       correlatedTo: "0x35751007a407ca6FEFfE80b3cB397736D2cf4dbe", //weETH address, not pricefeed
 
     },
+    // {
+    //   token: "pendle", //wont work as pool is v3
+    //   address: "0x0c880f6761F1af8d9Aa9C466984b80DAb9a8c9e8",
+    //   oracle: "univ2twap",
+    //   baseUnit: ethers.utils.parseUnits("1", "ether"),
+    //   uniswapPool: "0xdbaeB7f0DFe3a0AAFD798CCECB5b22E708f7852c",
+    //   isEthBased: true,
+    //   isReversedPool: true,
+    //   anchorPeriod: 60,
+
+    // },
+    {
+      token: "gmx", //wont work as pool is v3
+      address: "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
+      oracle: "univ3twap",
+      tokenA: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      tokenB: "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
+      fee: 10000,
+      twapWindow: 300,
+      baseToken: "0xfc5A1A6EB076a2C7aD06eD22C90d7E710E35ad0a",
+      quoteToken: "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1",
+      pool: ethers.constants.AddressZero, //setted during addTokenConfig
+
+    },
   ],
 };
 
@@ -182,6 +222,8 @@ export const getOraclesData = async (): Promise<Oracles> => {
   //const redstoneOracle = await ethers.getContractOrNull("RedStoneOracle");
   const pendlePTOracle = await ethers.getContractOrNull("PendlePtOracle");
   const onejumpchainlinkOracle = await ethers.getContractOrNull("OneJumpOracleV2");
+  const twapOracle = await ethers.getContractOrNull("TwapOracle");
+  const uniswapV3Oracle = await ethers.getContractOrNull("UniswapV3Oracle");
   //const binanceOracle = await ethers.getContractOrNull("BinanceOracle");
   //const pythOracle = await ethers.getContractOrNull("PythOracle");
 
@@ -253,6 +295,41 @@ export const getOraclesData = async (): Promise<Oracles> => {
             },
           }
         : {}),
+        ...(twapOracle
+          ? {
+            univ2twap: {
+                oracles: [twapOracle.address, addr0000, addr0000],
+                enableFlagsForOracles: [true, false, false],
+                underlyingOracle: twapOracle,
+                getTokenConfig: (asset: Asset, name: string) => ({
+                  asset: asset.address,
+                  baseUnit: asset.baseUnit,
+                  uniswapPool: asset.uniswapPool,
+                  isEthBased: asset.isEthBased,
+                  isReversedPool: asset.isReversedPool,
+                  anchorPeriod: asset.anchorPeriod,
+                }),
+              },
+            }
+          : {}),
+          ...(uniswapV3Oracle
+            ? {
+              univ3twap: {
+                  oracles: [uniswapV3Oracle.address, addr0000, addr0000],
+                  enableFlagsForOracles: [true, false, false],
+                  underlyingOracle: uniswapV3Oracle,
+                  getTokenConfig: (asset: Asset, name: string) => ({
+                    tokenA: asset.tokenA,
+                    tokenB: asset.tokenB,
+                    fee: asset.fee,
+                    twapWindow: asset.twapWindow,
+                    baseToken: asset.baseToken,
+                    quoteToken: asset.quoteToken,
+                    pool: asset.pool,
+                  }),
+                },
+              }
+            : {}),
     // ...(binanceOracle
     //   ? {
     //       binance: {

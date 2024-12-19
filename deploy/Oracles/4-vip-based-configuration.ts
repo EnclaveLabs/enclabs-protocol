@@ -29,6 +29,8 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
   //const binanceOracle = await hre.ethers.getContractOrNull("BinanceOracle");
   const pendlePTOracle = await hre.ethers.getContractOrNull("PendlePtOracle");
+  const twapOracle = await hre.ethers.getContractOrNull("TwapOracle");
+  const uniswapV3Oracle = await hre.ethers.getContractOrNull("UniswapV3Oracle");
   const chainlinkOracle = await hre.ethers.getContractOrNull("ChainlinkOracleSequencer"); //SequencerChainlinkOracle or ChainlinkOracle depending of L1 or L2
   const oneJumpOracle = await hre.ethers.getContractOrNull("OneJumpOracleV2");
   const oraclesData: Oracles = await getOraclesData();
@@ -94,6 +96,28 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
         argTypes: ["tuple(address,address,address)"],
         value: 0,
         parameters: [[tokenConfig.asset, tokenConfig.market, tokenConfig.underlyingToken]],
+      });
+    }
+
+    if (oraclesData[oracle].underlyingOracle.address === twapOracle?.address && getTokenConfig !== undefined) {
+      const tokenConfig: any = getTokenConfig(asset, networkName);
+      commands.push({
+        contract: oraclesData[oracle].underlyingOracle.address,
+        signature: "setTokenConfig((address,uint256,address,bool,bool,uint256))",
+        argTypes: ["tuple(address,uint256,address,bool,bool,uint256)"],
+        value: 0,
+        parameters: [[tokenConfig.asset, tokenConfig.baseUnit, tokenConfig.uniswapPool, tokenConfig.isEthBased, tokenConfig.isReversedPool, tokenConfig.anchorPeriod]],
+      });
+    }
+
+    if (oraclesData[oracle].underlyingOracle.address === uniswapV3Oracle?.address && getTokenConfig !== undefined) {
+      const tokenConfig: any = getTokenConfig(asset, networkName);
+      commands.push({
+        contract: oraclesData[oracle].underlyingOracle.address,
+        signature: "setTokenConfig((address,address,uint24,uint32,address,address,address))",
+        argTypes: ["tuple(address,address,uint24,uint32,address,address,address)"],
+        value: 0,
+        parameters: [[tokenConfig.tokenA, tokenConfig.tokenB, tokenConfig.fee, tokenConfig.twapWindow, tokenConfig.baseToken, tokenConfig.quoteToken, tokenConfig.pool]],
       });
     }
 
@@ -260,6 +284,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     // ...(await acceptOwnership("BoundValidator", owner, hre)),
     // ...(await acceptOwnership("BinanceOracle", owner, hre)),
     // ...(await acceptOwnership("PendlePtOracle", owner, hre)),
+    // ...(await acceptOwnership("TwapOracle", owner, hre)),
+    // ...(await acceptOwnership("UniswapV3Oracle", owner, hre)),
     ...(await configurePriceFeeds(hre)),
   ];
 
