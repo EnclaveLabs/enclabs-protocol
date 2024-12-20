@@ -11,7 +11,7 @@ import { IVToken } from "./Interfaces/IVToken.sol";
 
 /**
  * @title NativeTokenGateway
- * @author Venus
+ * @author Enclabs
  * @notice NativeTokenGateway contract facilitates interactions with a vToken market for native tokens (Native or wNativeToken)
  */
 contract NativeTokenGateway is INativeTokenGateway, Ownable2Step, ReentrancyGuard {

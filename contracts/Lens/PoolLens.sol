@@ -11,11 +11,11 @@ import { Action, ComptrollerInterface, ComptrollerViewInterface } from "../Compt
 import { PoolRegistryInterface } from "../Pool/PoolRegistryInterface.sol";
 import { PoolRegistry } from "../Pool/PoolRegistry.sol";
 import { RewardsDistributor } from "../Rewards/RewardsDistributor.sol";
-import { TimeManagerV8 } from "@venusprotocol/solidity-utilities/contracts/TimeManagerV8.sol";
+import { TimeManagerV8 } from "../TimeManagerV8.sol";
 
 /**
  * @title PoolLens
- * @author Venus
+ * @author Enclabs
  * @notice The `PoolLens` contract is designed to retrieve important information for each registered pool. A list of essential information
  * for all pools within the lending protocol can be acquired through the function `getAllPools()`. Additionally, the following records can be
  * looked up for specific pools and markets:
@@ -162,18 +162,18 @@ contract PoolLens is ExponentialNoError, TimeManagerV8 {
      * @notice Queries all pools with addtional details for each of them
      * @dev This function is not designed to be called in a transaction: it is too gas-intensive
      * @param poolRegistryAddress The address of the PoolRegistry contract
-     * @return Arrays of all Venus pools' data
+     * @return Arrays of all Enclabs pools' data
      */
     function getAllPools(address poolRegistryAddress) external view returns (PoolData[] memory) {
         PoolRegistryInterface poolRegistryInterface = PoolRegistryInterface(poolRegistryAddress);
-        PoolRegistry.VenusPool[] memory venusPools = poolRegistryInterface.getAllPools();
-        uint256 poolLength = venusPools.length;
+        PoolRegistry.EnclabsPool[] memory enclabsPools = poolRegistryInterface.getAllPools();
+        uint256 poolLength = enclabsPools.length;
 
         PoolData[] memory poolDataItems = new PoolData[](poolLength);
 
         for (uint256 i; i < poolLength; ++i) {
-            PoolRegistry.VenusPool memory venusPool = venusPools[i];
-            PoolData memory poolData = getPoolDataFromVenusPool(poolRegistryAddress, venusPool);
+            PoolRegistry.EnclabsPool memory enclabsPool = enclabsPools[i];
+            PoolData memory poolData = getPoolDataFromEnclabsPool(poolRegistryAddress, enclabsPool);
             poolDataItems[i] = poolData;
         }
 
@@ -191,7 +191,7 @@ contract PoolLens is ExponentialNoError, TimeManagerV8 {
         address comptroller
     ) external view returns (PoolData memory) {
         PoolRegistryInterface poolRegistryInterface = PoolRegistryInterface(poolRegistryAddress);
-        return getPoolDataFromVenusPool(poolRegistryAddress, poolRegistryInterface.getPoolByComptroller(comptroller));
+        return getPoolDataFromEnclabsPool(poolRegistryAddress, poolRegistryInterface.getPoolByComptroller(comptroller));
     }
 
     /**
@@ -334,15 +334,15 @@ contract PoolLens is ExponentialNoError, TimeManagerV8 {
     /**
      * @notice Queries additional information for the pool
      * @param poolRegistryAddress Address of the PoolRegistry
-     * @param venusPool The VenusPool Object from PoolRegistry
+     * @param enclabsPool The EnclabsPool Object from PoolRegistry
      * @return Enriched PoolData
      */
-    function getPoolDataFromVenusPool(
+    function getPoolDataFromEnclabsPool(
         address poolRegistryAddress,
-        PoolRegistry.VenusPool memory venusPool
+        PoolRegistry.EnclabsPool memory enclabsPool
     ) public view returns (PoolData memory) {
         // Get tokens in the Pool
-        ComptrollerInterface comptrollerInstance = ComptrollerInterface(venusPool.comptroller);
+        ComptrollerInterface comptrollerInstance = ComptrollerInterface(enclabsPool.comptroller);
 
         VToken[] memory vTokens = comptrollerInstance.getAllMarkets();
 
@@ -350,21 +350,21 @@ contract PoolLens is ExponentialNoError, TimeManagerV8 {
 
         PoolRegistryInterface poolRegistryInterface = PoolRegistryInterface(poolRegistryAddress);
 
-        PoolRegistry.VenusPoolMetaData memory venusPoolMetaData = poolRegistryInterface.getVenusPoolMetadata(
-            venusPool.comptroller
+        PoolRegistry.EnclabsPoolMetaData memory enclabsPoolMetaData = poolRegistryInterface.getEnclabsPoolMetadata(
+            enclabsPool.comptroller
         );
 
-        ComptrollerViewInterface comptrollerViewInstance = ComptrollerViewInterface(venusPool.comptroller);
+        ComptrollerViewInterface comptrollerViewInstance = ComptrollerViewInterface(enclabsPool.comptroller);
 
         PoolData memory poolData = PoolData({
-            name: venusPool.name,
-            creator: venusPool.creator,
-            comptroller: venusPool.comptroller,
-            blockPosted: venusPool.blockPosted,
-            timestampPosted: venusPool.timestampPosted,
-            category: venusPoolMetaData.category,
-            logoURL: venusPoolMetaData.logoURL,
-            description: venusPoolMetaData.description,
+            name: enclabsPool.name,
+            creator: enclabsPool.creator,
+            comptroller: enclabsPool.comptroller,
+            blockPosted: enclabsPool.blockPosted,
+            timestampPosted: enclabsPool.timestampPosted,
+            category: enclabsPoolMetaData.category,
+            logoURL: enclabsPoolMetaData.logoURL,
+            description: enclabsPoolMetaData.description,
             vTokens: vTokenMetadataItems,
             priceOracle: address(comptrollerViewInstance.oracle()),
             closeFactor: comptrollerViewInstance.closeFactorMantissa(),

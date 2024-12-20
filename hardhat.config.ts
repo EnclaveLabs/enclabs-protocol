@@ -273,6 +273,12 @@ const config: HardhatUserConfig = {
       timeout: 1200000,
       accounts: process.env.DEPLOYER_PRIVATE_KEY ? [`0x${process.env.DEPLOYER_PRIVATE_KEY}`] : [],
     },
+    sonic: {
+      url: "https://rpc.soniclabs.com",
+      chainId: 146,
+      live: true,
+      accounts: process.env.DEPLOYER_PRIVATE_KEY_SONIC ? [`0x${process.env.DEPLOYER_PRIVATE_KEY_SONIC}`] : [],
+    },
     ethereum: {
       url: process.env.ARCHIVE_NODE_ethereum || "https://ethereum.blockpi.network/v1/rpc/public",
       chainId: 1,
@@ -329,6 +335,14 @@ const config: HardhatUserConfig = {
   },
   etherscan: {
     customChains: [
+      {
+        network: "sonic",
+        chainId: 146,
+        urls: {
+          apiURL: "https://sonicscan.org/api",
+          browserURL: "https://sonicscan.org"
+        }
+      },
       {
         network: "bsctestnet",
         chainId: 97,
@@ -429,6 +443,7 @@ const config: HardhatUserConfig = {
       arbitrumsepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       opsepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       opmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
+      sonic: process.env.SONICSAN_API_KEY || "SONICSAN_API_KEY",
     },
   },
   paths: {
