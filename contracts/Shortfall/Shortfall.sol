@@ -21,7 +21,7 @@ import { EXP_SCALE } from "../lib/constants.sol";
 
 /**
  * @title Shortfall
- * @author Venus
+ * @author Enclabs
  * @notice Shortfall is an auction contract designed to auction off the `convertibleBaseAsset` accumulated in `RiskFund`. The `convertibleBaseAsset`
  * is auctioned in exchange for users paying off the pool's bad debt. An auction can be started by anyone once a pool's bad debt has reached a minimum value.
  * This value is set and can be changed by the authorized accounts. If the pool’s bad debt exceeds the risk fund plus a 10% incentive, then the auction winner
@@ -401,7 +401,7 @@ contract Shortfall is
      * @param comptroller Comptroller address of the pool
      */
     function _startAuction(address comptroller) internal {
-        PoolRegistryInterface.VenusPool memory pool = PoolRegistry(poolRegistry).getPoolByComptroller(comptroller);
+        PoolRegistryInterface.EnclabsPool memory pool = PoolRegistry(poolRegistry).getPoolByComptroller(comptroller);
         require(pool.comptroller == comptroller, "comptroller doesn't exist pool registry");
 
         Auction storage auction = auctions[comptroller];

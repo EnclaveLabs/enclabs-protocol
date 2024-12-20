@@ -9,7 +9,7 @@ import { InterestRateModel } from "./InterestRateModel.sol";
 
 /**
  * @title VTokenStorage
- * @author Venus
+ * @author Enclabs
  * @notice Storage layout used by the `VToken` contract
  */
 // solhint-disable-next-line max-states-count
@@ -141,7 +141,7 @@ contract VTokenStorage {
 
 /**
  * @title VTokenInterface
- * @author Venus
+ * @author Enclabs
  * @notice Interface implemented by the `VToken` contract
  */
 abstract contract VTokenInterface is VTokenStorage {

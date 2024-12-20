@@ -5,7 +5,7 @@ import "./IAccessControlManagerV5.sol";
 
 /**
  * @title AccessControlledV5
- * @author Venus
+ * @author Enclabs
  * @notice This contract is helper between access control manager and actual contract. This contract further inherited by other contract (using solidity 0.5.16)
  * to integrate access controlled mechanism. It provides initialise methods and verifying access methods.
  */

@@ -16,7 +16,7 @@ import { ensureNonzeroAddress } from "./lib/validators.sol";
 
 /**
  * @title Comptroller
- * @author Venus
+ * @author Enclabs
  * @notice The Comptroller is designed to provide checks for all minting, redeeming, transferring, borrowing, lending, repaying, liquidating,
  * and seizing done by the `vToken` contract. Each pool has one `Comptroller` checking these interactions across markets. When a user interacts
  * with a given market by one of these main actions, a call is made to a corresponding hook in the associated `Comptroller`, which either allows
@@ -223,7 +223,7 @@ contract Comptroller is
     /**
      * @notice Add assets to be included in account liquidity calculation; enabling them to be used as collateral
      * @param vTokens The list of addresses of the vToken markets to be enabled
-     * @return errors An array of NO_ERROR for compatibility with Venus core tooling
+     * @return errors An array of NO_ERROR for compatibility with Enclabs core tooling
      * @custom:event MarketEntered is emitted for each market on success
      * @custom:error ActionPaused error is thrown if entering any of the markets is paused
      * @custom:error MarketNotListed error is thrown if any of the markets is not listed
@@ -247,7 +247,7 @@ contract Comptroller is
      * @notice Unlist a market by setting isListed to false
      * @dev Checks if all actions are paused, borrow/supply caps is set to 0 and collateral factor is to 0.
      * @param market The address of the market (token) to unlist
-     * @return uint256 Always NO_ERROR for compatibility with Venus core tooling
+     * @return uint256 Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:event MarketUnlisted is emitted on success
      * @custom:error MarketNotListed error is thrown when the market is not listed
      * @custom:error BorrowActionNotPaused error is thrown if borrow action is not paused
@@ -352,7 +352,7 @@ contract Comptroller is
      * @dev Sender must not have an outstanding borrow balance in the asset,
      *  or be providing necessary collateral for an outstanding borrow.
      * @param vTokenAddress The address of the asset to be removed
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:event MarketExited is emitted on success
      * @custom:error ActionPaused error is thrown if exiting the market is paused
      * @custom:error NonzeroBorrowBalance error is thrown if the user has an outstanding borrow in this market
@@ -1287,9 +1287,9 @@ contract Comptroller is
 
     /**
      * @notice Determine the current account liquidity with respect to liquidation threshold requirements
-     * @dev The interface of this function is intentionally kept compatible with Compound and Venus Core
+     * @dev The interface of this function is intentionally kept compatible with Compound and Enclabs Core
      * @param account The account get liquidity for
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @return liquidity Account liquidity in excess of liquidation threshold requirements,
      * @return shortfall Account shortfall below liquidation threshold requirements
      */
@@ -1302,9 +1302,9 @@ contract Comptroller is
 
     /**
      * @notice Determine the current account liquidity with respect to collateral requirements
-     * @dev The interface of this function is intentionally kept compatible with Compound and Venus Core
+     * @dev The interface of this function is intentionally kept compatible with Compound and Enclabs Core
      * @param account The account get liquidity for
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @return liquidity Account liquidity in excess of collateral requirements,
      * @return shortfall Account shortfall below collateral requirements
      */
@@ -1317,12 +1317,12 @@ contract Comptroller is
 
     /**
      * @notice Determine what the account liquidity would be if the given amounts were redeemed/borrowed
-     * @dev The interface of this function is intentionally kept compatible with Compound and Venus Core
+     * @dev The interface of this function is intentionally kept compatible with Compound and Enclabs Core
      * @param vTokenModify The market to hypothetically redeem/borrow in
      * @param account The account to determine liquidity for
      * @param redeemTokens The number of tokens to hypothetically redeem
      * @param borrowAmount The amount of underlying to hypothetically borrow
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @return liquidity Hypothetical account liquidity in excess of collateral requirements,
      * @return shortfall Hypothetical account shortfall below collateral requirements
      */
@@ -1378,7 +1378,7 @@ contract Comptroller is
      * @param vTokenBorrowed The address of the borrowed vToken
      * @param vTokenCollateral The address of the collateral vToken
      * @param actualRepayAmount The amount of vTokenBorrowed underlying to convert into vTokenCollateral tokens
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @return tokensToSeize Number of vTokenCollateral tokens to be seized in a liquidation
      * @custom:error PriceError if the oracle returns an invalid price
      */

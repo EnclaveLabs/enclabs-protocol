@@ -3,7 +3,7 @@ pragma solidity ^0.8.25;
 
 /**
  * @title IRiskFund
- * @author Venus
+ * @author Enclabs
  * @notice Interface implemented by `RiskFund`.
  */
 interface IRiskFund {

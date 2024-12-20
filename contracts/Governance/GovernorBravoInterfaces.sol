@@ -3,7 +3,7 @@ pragma experimental ABIEncoderV2;
 
 /**
  * @title GovernorBravoEvents
- * @author Venus
+ * @author Enclabs
  * @notice Set of events emitted by the GovernorBravo contracts.
  */
 contract GovernorBravoEvents {
@@ -65,7 +65,7 @@ contract GovernorBravoEvents {
 
 /**
  * @title GovernorBravoDelegatorStorage
- * @author Venus
+ * @author Enclabs
  * @notice Storage layout of the `GovernorBravoDelegator` contract
  */
 contract GovernorBravoDelegatorStorage {
@@ -101,10 +101,10 @@ contract GovernorBravoDelegateStorageV1 is GovernorBravoDelegatorStorage {
     /// @notice The total number of proposals
     uint public proposalCount;
 
-    /// @notice The address of the Venus Protocol Timelock
+    /// @notice The address of the Enclabs Protocol Timelock
     TimelockInterface public timelock;
 
-    /// @notice The address of the Venus governance token
+    /// @notice The address of the Enclabs governance token
     EclVaultInterface public eclVault;
 
     /// @notice The official record of all proposals ever proposed
@@ -208,7 +208,7 @@ contract GovernorBravoDelegateStorageV2 is GovernorBravoDelegateStorageV1 {
 
 /**
  * @title TimelockInterface
- * @author Venus
+ * @author Enclabs
  * @notice Interface implemented by the Timelock contract.
  */
 interface TimelockInterface {

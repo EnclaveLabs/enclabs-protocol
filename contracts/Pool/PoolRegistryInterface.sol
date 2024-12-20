@@ -3,14 +3,14 @@ pragma solidity ^0.8.25;
 
 /**
  * @title PoolRegistryInterface
- * @author Venus
+ * @author Enclabs
  * @notice Interface implemented by `PoolRegistry`.
  */
 interface PoolRegistryInterface {
     /**
-     * @notice Struct for a Venus interest rate pool.
+     * @notice Struct for a Enclabs interest rate pool.
      */
-    struct VenusPool {
+    struct EnclabsPool {
         string name;
         address creator;
         address comptroller;
@@ -19,19 +19,19 @@ interface PoolRegistryInterface {
     }
 
     /**
-     * @notice Struct for a Venus interest rate pool metadata.
+     * @notice Struct for a Enclabs interest rate pool metadata.
      */
-    struct VenusPoolMetaData {
+    struct EnclabsPoolMetaData {
         string category;
         string logoURL;
         string description;
     }
 
     /// @notice Get all pools in PoolRegistry
-    function getAllPools() external view returns (VenusPool[] memory);
+    function getAllPools() external view returns (EnclabsPool[] memory);
 
     /// @notice Get a pool by comptroller address
-    function getPoolByComptroller(address comptroller) external view returns (VenusPool memory);
+    function getPoolByComptroller(address comptroller) external view returns (EnclabsPool memory);
 
     /// @notice Get the address of the VToken contract in the Pool where the underlying token is the provided asset
     function getVTokenForAsset(address comptroller, address asset) external view returns (address);
@@ -40,5 +40,5 @@ interface PoolRegistryInterface {
     function getPoolsSupportedByAsset(address asset) external view returns (address[] memory);
 
     /// @notice Get the metadata of a Pool by comptroller address
-    function getVenusPoolMetadata(address comptroller) external view returns (VenusPoolMetaData memory);
+    function getEnclabsPoolMetadata(address comptroller) external view returns (EnclabsPoolMetaData memory);
 }

@@ -20,7 +20,7 @@ enum Action {
 
 /**
  * @title ComptrollerInterface
- * @author Venus
+ * @author Enclabs
  * @notice Interface implemented by the `Comptroller` contract.
  */
 interface ComptrollerInterface {
@@ -107,7 +107,7 @@ interface ComptrollerInterface {
 
 /**
  * @title ComptrollerViewInterface
- * @author Venus
+ * @author Enclabs
  * @notice Interface implemented by the `Comptroller` contract, including only some util view functions.
  */
 interface ComptrollerViewInterface {

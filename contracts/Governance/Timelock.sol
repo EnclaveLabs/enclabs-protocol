@@ -4,7 +4,7 @@ import "../Utils/SafeMath.sol";
 
 /**
  * @title Timelock
- * @author Venus
+ * @author Enclabs
  * @notice The Timelock contract.
  */
 contract Timelock {

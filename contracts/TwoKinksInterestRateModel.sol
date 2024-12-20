@@ -7,7 +7,7 @@ import { EXP_SCALE, MANTISSA_ONE } from "./lib/constants.sol";
 
 /**
  * @title TwoKinksInterestRateModel
- * @author Venus
+ * @author Enclabs
  * @notice An interest rate model with two different slope increase or decrease each after a certain utilization threshold called **kink** is reached.
  */
 contract TwoKinksInterestRateModel is InterestRateModel, TimeManagerV8 {

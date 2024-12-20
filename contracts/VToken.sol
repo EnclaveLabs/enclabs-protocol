@@ -17,7 +17,7 @@ import { ensureNonzeroAddress } from "./lib/validators.sol";
 
 /**
  * @title VToken
- * @author Venus
+ * @author Enclabs
  * @notice Each asset that is supported by a pool is integrated through an instance of the `VToken` contract. As outlined in the protocol overview,
  * each isolated pool creates its own `vToken` corresponding to an asset. Within a given pool, each included `vToken` is referred to as a market of
  * the pool. The main actions a user regularly interacts with in a market are:
@@ -35,7 +35,7 @@ import { ensureNonzeroAddress } from "./lib/validators.sol";
  * calculated using the market’s corresponding liquidation threshold, the borrow is eligible for liquidation. When a user repays a borrow, they must also
  * pay off interest accrued on the borrow.
  * 
- * The Venus protocol includes unique mechanisms for healing an account and liquidating an account. These actions are performed in the `Comptroller`
+ * The Enclabs protocol includes unique mechanisms for healing an account and liquidating an account. These actions are performed in the `Comptroller`
  * and consider all borrows and collateral for which a given account is entered within a market. These functions may only be called on an account with a
  * total collateral amount that is no larger than a universal `minLiquidatableCollateral` value, which is used for all markets within a `Comptroller`.
  * Both functions settle all of an account’s borrows, but `healAccount()` may add `badDebt` to a vToken. For more detail, see the description of
@@ -270,7 +270,7 @@ contract VToken is
      * @notice Sender supplies assets into the market and receives vTokens in exchange
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
      * @param mintAmount The amount of the underlying asset to supply
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:event Emits Mint and Transfer events; may emit AccrueInterest
      * @custom:access Not restricted
      */
@@ -286,7 +286,7 @@ contract VToken is
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
      * @param minter User whom the supply will be attributed to
      * @param mintAmount The amount of the underlying asset to supply
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:event Emits Mint and Transfer events; may emit AccrueInterest
      * @custom:access Not restricted
      * @custom:error ZeroAddressNotAllowed is thrown when minter address is zero
@@ -304,7 +304,7 @@ contract VToken is
      * @notice Sender redeems vTokens in exchange for the underlying asset
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
      * @param redeemTokens The number of vTokens to redeem into underlying
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:event Emits Redeem and Transfer events; may emit AccrueInterest
      * @custom:error RedeemTransferOutNotPossible is thrown when the protocol has insufficient cash
      * @custom:access Not restricted
@@ -322,7 +322,7 @@ contract VToken is
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
      * @param redeemer The user on behalf of whom to redeem
      * @param redeemTokens The number of vTokens to redeem into underlying
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:error InsufficientRedeemApproval is thrown when sender is not approved by the redeemer for the given amount
      * @custom:error RedeemTransferOutNotPossible is thrown when the protocol has insufficient cash
      * @custom:event Emits Redeem and Transfer events; may emit AccrueInterest
@@ -341,7 +341,7 @@ contract VToken is
      * @notice Sender redeems vTokens in exchange for a specified amount of underlying asset
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
      * @param redeemAmount The amount of underlying to receive from redeeming vTokens
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      */
     function redeemUnderlying(uint256 redeemAmount) external override nonReentrant returns (uint256) {
         accrueInterest();
@@ -356,7 +356,7 @@ contract VToken is
      * @dev Accrues interest whether or not the operation succeeds, unless reverted
      * @param redeemer, on behalf of whom to redeem
      * @param redeemAmount The amount of underlying to receive from redeeming vTokens
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:error InsufficientRedeemApproval is thrown when sender is not approved by the redeemer for the given amount
      * @custom:event Emits Redeem and Transfer events; may emit AccrueInterest
      * @custom:access Not restricted
@@ -376,7 +376,7 @@ contract VToken is
     /**
      * @notice Sender borrows assets from the protocol to their own address
      * @param borrowAmount The amount of the underlying asset to borrow
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:event Emits Borrow event; may emit AccrueInterest
      * @custom:error BorrowCashNotAvailable is thrown when the protocol has insufficient cash
      * @custom:access Not restricted
@@ -393,7 +393,7 @@ contract VToken is
      *   for senders, explicitly marked as delegates of the borrower using `comptroller.updateDelegate`
      * @param borrower The borrower, on behalf of whom to borrow
      * @param borrowAmount The amount of the underlying asset to borrow
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:error DelegateNotApproved is thrown if caller is not approved delegate
      * @custom:error BorrowCashNotAvailable is thrown when the protocol has insufficient cash
      * @custom:event Emits Borrow event; may emit AccrueInterest
@@ -410,7 +410,7 @@ contract VToken is
     /**
      * @notice Sender repays their own borrow
      * @param repayAmount The amount to repay, or type(uint256).max for the full outstanding amount
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:event Emits RepayBorrow event; may emit AccrueInterest
      * @custom:access Not restricted
      */
@@ -425,7 +425,7 @@ contract VToken is
      * @notice Sender repays a borrow belonging to borrower
      * @param borrower the account with the debt being payed off
      * @param repayAmount The amount to repay, or type(uint256).max for the full outstanding amount
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:event Emits RepayBorrow event; may emit AccrueInterest
      * @custom:access Not restricted
      */
@@ -442,7 +442,7 @@ contract VToken is
      * @param borrower The borrower of this vToken to be liquidated
      * @param repayAmount The amount of the underlying borrowed asset to repay
      * @param vTokenCollateral The market in which to seize collateral from the borrower
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @custom:event Emits LiquidateBorrow event; may emit AccrueInterest
      * @custom:error LiquidateAccrueCollateralInterestFailed is thrown when it is not possible to accrue interest on the collateral vToken
      * @custom:error LiquidateCollateralFreshnessCheck is thrown when interest has not been accrued on the collateral vToken
@@ -732,7 +732,7 @@ contract VToken is
      * @notice Get a snapshot of the account's balances, and the cached exchange rate
      * @dev This is used by comptroller to more efficiently perform liquidity checks.
      * @param account Address of the account to snapshot
-     * @return error Always NO_ERROR for compatibility with Venus core tooling
+     * @return error Always NO_ERROR for compatibility with Enclabs core tooling
      * @return vTokenBalance User's balance of vTokens
      * @return borrowBalance Amount owed in terms of underlying
      * @return exchangeRate Stored exchange rate

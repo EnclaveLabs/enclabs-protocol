@@ -3,7 +3,7 @@ pragma solidity 0.5.16;
 
 /**
  * @title IAccessControlManagerV5
- * @author Venus
+ * @author Enclabs
  * @notice Interface implemented by the `AccessControlManagerV5` contract.
  */
 interface IAccessControlManagerV5 {

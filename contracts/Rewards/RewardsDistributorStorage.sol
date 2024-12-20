@@ -7,7 +7,7 @@ import { Comptroller } from "../Comptroller.sol";
 
 /**
  * @title RewardsDistributorStorage
- * @author Venus
+ * @author Enclabs
  * @dev Storage for RewardsDistributor
  */
 contract RewardsDistributorStorage {

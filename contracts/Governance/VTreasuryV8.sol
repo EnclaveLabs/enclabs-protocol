@@ -7,8 +7,8 @@ import { ReentrancyGuard } from "@openzeppelin/contracts/security/ReentrancyGuar
 
 /**
  * @title VTreasuryV8
- * @author Venus
- * @notice Protocol treasury that holds tokens owned by Venus
+ * @author Enclabs
+ * @notice Protocol treasury that holds tokens owned by Enclabs
  */
 contract VTreasuryV8 is Ownable2Step, ReentrancyGuard {
     using SafeERC20 for IERC20;

@@ -15,7 +15,7 @@ import { RewardsDistributorStorage } from "./RewardsDistributorStorage.sol";
 
 /**
  * @title `RewardsDistributor`
- * @author Venus
+ * @author Enclabs
  * @notice Contract used to configure, track and distribute rewards to users based on their actions (borrows and supplies) in the protocol.
  * Users can receive additional rewards through a `RewardsDistributor`. Each `RewardsDistributor` proxy is initialized with a specific reward
  * token and `Comptroller`, which can then distribute the reward token to users that supply or borrow in the associated pool.

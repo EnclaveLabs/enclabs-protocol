@@ -8,7 +8,7 @@ import "./IAccessControlManagerV8.sol";
 
 /**
  * @title AccessControlledV8
- * @author Venus
+ * @author Enclabs
  * @notice This contract is helper between access control manager and actual contract. This contract further inherited by other contract (using solidity 0.8.13)
  * to integrate access controlled mechanism. It provides initialise methods and verifying access methods.
  */

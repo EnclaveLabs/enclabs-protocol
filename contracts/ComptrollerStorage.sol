@@ -10,7 +10,7 @@ import { Action } from "./ComptrollerInterface.sol";
 
 /**
  * @title ComptrollerStorage
- * @author Venus
+ * @author Enclabs
  * @notice Storage layout for the `Comptroller` contract.
  */
 contract ComptrollerStorage {

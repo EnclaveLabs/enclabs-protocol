@@ -3,7 +3,7 @@ pragma solidity 0.8.25;
 
 /**
  * @title TokenErrorReporter
- * @author Venus
+ * @author Enclabs
  * @notice Errors that can be thrown by the `VToken` contract.
  */
 contract TokenErrorReporter {

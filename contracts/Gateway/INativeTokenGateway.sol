@@ -5,7 +5,7 @@ import { IERC20 } from "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol"
 
 /**
  * @title INativeTokenGateway
- * @author Venus
+ * @author Enclabs
  * @notice Interface for NativeTokenGateway contract
  */
 interface INativeTokenGateway {

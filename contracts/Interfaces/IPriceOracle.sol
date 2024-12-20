@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 
 /// @title IPriceOracle
-/// @author ENclabs
+/// @author Enclabs
 /// @notice Common PriceOracle interface.
 interface IPriceOracle {
 

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: BSD-3-Clause
-// SPDX-FileCopyrightText: 2022 Venus
+// SPDX-FileCopyrightText: 2022 Enclabs
 pragma solidity 0.8.25;
 
 import "@openzeppelin/contracts-upgradeable/security/PausableUpgradeable.sol";
@@ -9,7 +9,7 @@ import "./Governance/AccessControlledV8.sol";
 
 /**
  * @title ResilientOracle
- * @author Venus
+ * @author Enclabs
  * @notice The Resilient Oracle is the main contract that the protocol uses to fetch prices of assets.
  *
  * DeFi protocols are vulnerable to price oracle failures including oracle manipulation and incorrectly

@@ -3,7 +3,7 @@ pragma solidity 0.8.25;
 
 /**
  * @title MaxLoopsLimitHelper
- * @author Venus
+ * @author Enclabs
  * @notice Abstract contract used to avoid collection with too many items that would generate gas errors and DoS.
  */
 abstract contract MaxLoopsLimitHelper {

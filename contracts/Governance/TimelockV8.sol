@@ -4,7 +4,7 @@ import { ensureNonzeroAddress } from "@venusprotocol/solidity-utilities/contract
 
 /**
  * @title TimelockV8
- * @author Venus
+ * @author Enclabs
  * @notice The Timelock contract using solidity V8.
  * This contract also differs from the original timelock because it has a virtual function to get minimum delays
  * and allow test deployments to override the value.

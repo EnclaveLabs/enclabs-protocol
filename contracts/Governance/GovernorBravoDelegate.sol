@@ -5,7 +5,7 @@ import { Ownable2StepUpgradeable } from "@openzeppelin/contracts-upgradeable/acc
 
 /**
  * @title TimelockInterface
- * @author Venus
+ * @author Enclabs
  * @notice Interface implemented by the Timelock contract.
  */
 interface TimelockInterface {
@@ -52,7 +52,7 @@ interface GovernorAlphaInterface {
 }
 /**
  * @title GovernorBravoDelegate
- * @notice Venus Governance latest on chain governance includes several new features including variable proposal routes and fine grained pause control.
+ * @notice Enclabs Governance latest on chain governance includes several new features including variable proposal routes and fine grained pause control.
  * Variable routes for proposals allows for governance paramaters such as voting threshold and timelocks to be customized based on the risk level and
  * impact of the proposal. Added granularity to the pause control mechanism allows governance to pause individual actions on specific markets,
  * which reduces impact on the protocol as a whole. This is particularly useful when applied to isolated pools.
@@ -69,7 +69,7 @@ interface GovernorAlphaInterface {
  *
  * # Governor Bravo
  *
- * `GovernanceBravoDelegate` is main Venus Governance contract. Users interact with it to:
+ * `GovernanceBravoDelegate` is main Enclabs Governance contract. Users interact with it to:
  * - Submit new proposal
  * - Vote on a proposal
  * - Cancel a proposal
@@ -79,9 +79,9 @@ interface GovernorAlphaInterface {
  * - If a user's voting power drops below certain amount, anyone can cancel the the proposal. The governance guardian and proposal creator can also
  * cancel a proposal at anytime before it is queued for execution.
  *
- * ## Venus Improvement Proposal
+ * ## Enclabs Improvement Proposal
  *
- * Venus Governance allows for Venus Improvement Proposals (VIPs) to be categorized based on their impact and risk levels. This allows for optimizing proposals
+ * Enclabs Governance allows for Enclabs Improvement Proposals (VIPs) to be categorized based on their impact and risk levels. This allows for optimizing proposals
  * execution to allow for things such as expediting interest rate changes and quickly updating risk parameters, while moving slower on other types of proposals
  * that can prevent a larger risk to the protocol and are not urgent. There are three different types of VIPs with different proposal paramters:
  *
@@ -124,10 +124,10 @@ contract GovernorBravoDelegate {
     /// @notice The total number of proposals
     uint public proposalCount;
 
-    /// @notice The address of the Venus Protocol Timelock
+    /// @notice The address of the Enclabs Protocol Timelock
     TimelockInterface public timelock;
 
-    /// @notice The address of the Venus governance token
+    /// @notice The address of the Enclabs governance token
     EclVaultInterface public eclVault;
 
     /// @notice The official record of all proposals ever proposed

@@ -6,7 +6,7 @@ import { IRiskFund } from "../Shortfall/IRiskFund.sol";
 
 /**
  * @title ShortfallStorage
- * @author Venus
+ * @author Enclabs
  * @dev Storage for Shortfall
  */
 contract ShortfallStorage {

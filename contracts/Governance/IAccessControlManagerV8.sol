@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/access/IAccessControl.sol";
 
 /**
  * @title IAccessControlManagerV8
- * @author Venus
+ * @author Enclabs
  * @notice Interface implemented by the `AccessControlManagerV8` contract.
  */
 interface IAccessControlManagerV8 is IAccessControl {

@@ -13,7 +13,7 @@ import { ensureNonzeroAddress } from "../lib/validators.sol";
 
 /**
  * @title PoolRegistry
- * @author Venus
+ * @author Enclabs
  * @notice The Isolated Pools architecture centers around the `PoolRegistry` contract. The `PoolRegistry` maintains a directory of isolated lending
  * pools and can perform actions like creating and registering new pools, adding new markets to existing pools, setting and updating the pool's required
  * metadata, and providing the getter methods to get information on the pools.
@@ -23,7 +23,7 @@ import { ensureNonzeroAddress } from "../lib/validators.sol";
  * any existing pool like `getVTokenForAsset` and `getPoolsSupportedByAsset`. It also contains methods for updating pool metadata (`updatePoolMetadata`)
  * and setting pool name (`setPoolName`).
  *
- * The directory of pools is managed through two mappings: `_poolByComptroller` which is a hashmap with the comptroller address as the key and `VenusPool` as
+ * The directory of pools is managed through two mappings: `_poolByComptroller` which is a hashmap with the comptroller address as the key and `EnclabsPool` as
  * the value and `_poolsByID` which is an array of comptroller addresses. Individual pools can be accessed by calling `getPoolByComptroller` with the pool's
  * comptroller address. `_poolsByID` is used to iterate through all of the pools.
  *
@@ -51,7 +51,7 @@ contract PoolRegistry is Ownable2StepUpgradeable, AccessControlledV8, PoolRegist
     /**
      * @notice Maps pool's comptroller address to metadata.
      */
-    mapping(address => VenusPoolMetaData) public metadata;
+    mapping(address => EnclabsPoolMetaData) public metadata;
 
     /**
      * @dev Maps pool ID to pool's comptroller address
@@ -64,9 +64,9 @@ contract PoolRegistry is Ownable2StepUpgradeable, AccessControlledV8, PoolRegist
     uint256 private _numberOfPools;
 
     /**
-     * @dev Maps comptroller address to Venus pool Index.
+     * @dev Maps comptroller address to Enclabs pool Index.
      */
-    mapping(address => VenusPool) private _poolByComptroller;
+    mapping(address => EnclabsPool) private _poolByComptroller;
 
     /**
      * @dev Maps pool's comptroller address to asset to vToken.
@@ -79,9 +79,9 @@ contract PoolRegistry is Ownable2StepUpgradeable, AccessControlledV8, PoolRegist
     mapping(address => address[]) private _supportedPools;
 
     /**
-     * @notice Emitted when a new Venus pool is added to the directory.
+     * @notice Emitted when a new Enclabs pool is added to the directory.
      */
-    event PoolRegistered(address indexed comptroller, VenusPool pool);
+    event PoolRegistered(address indexed comptroller, EnclabsPool pool);
 
     /**
      * @notice Emitted when a pool name is set.
@@ -93,8 +93,8 @@ contract PoolRegistry is Ownable2StepUpgradeable, AccessControlledV8, PoolRegist
      */
     event PoolMetadataUpdated(
         address indexed comptroller,
-        VenusPoolMetaData oldMetadata,
-        VenusPoolMetaData newMetadata
+        EnclabsPoolMetaData oldMetadata,
+        EnclabsPoolMetaData newMetadata
     );
 
     /**
@@ -119,14 +119,14 @@ contract PoolRegistry is Ownable2StepUpgradeable, AccessControlledV8, PoolRegist
     }
 
     /**
-     * @notice Adds a new Venus pool to the directory
+     * @notice Adds a new Enclabs pool to the directory
      * @dev Price oracle must be configured before adding a pool
      * @param name The name of the pool
      * @param comptroller Pool's Comptroller contract
      * @param closeFactor The pool's close factor (scaled by 1e18)
      * @param liquidationIncentive The pool's liquidation incentive (scaled by 1e18)
      * @param minLiquidatableCollateral Minimal collateral for regular (non-batch) liquidations flow
-     * @return index The index of the registered Venus pool
+     * @return index The index of the registered Enclabs pool
      * @custom:error ZeroAddressNotAllowed is thrown when Comptroller address is zero
      * @custom:error ZeroAddressNotAllowed is thrown when price oracle address is zero
      */
@@ -144,7 +144,7 @@ contract PoolRegistry is Ownable2StepUpgradeable, AccessControlledV8, PoolRegist
 
         uint256 poolId = _registerPool(name, address(comptroller));
 
-        // Set Venus pool parameters
+        // Set Enclabs pool parameters
         comptroller.setCloseFactor(closeFactor);
         comptroller.setLiquidationIncentive(liquidationIncentive);
         comptroller.setMinLiquidatableCollateral(minLiquidatableCollateral);
@@ -204,14 +204,14 @@ contract PoolRegistry is Ownable2StepUpgradeable, AccessControlledV8, PoolRegist
     }
 
     /**
-     * @notice Modify existing Venus pool name
+     * @notice Modify existing Enclabs pool name
      * @param comptroller Pool's Comptroller
      * @param name New pool name
      */
     function setPoolName(address comptroller, string calldata name) external {
         _checkAccessAllowed("setPoolName(address,string)");
         _ensureValidName(name);
-        VenusPool storage pool = _poolByComptroller[comptroller];
+        EnclabsPool storage pool = _poolByComptroller[comptroller];
         string memory oldName = pool.name;
         pool.name = name;
         emit PoolNameSet(comptroller, oldName, name);
@@ -222,21 +222,21 @@ contract PoolRegistry is Ownable2StepUpgradeable, AccessControlledV8, PoolRegist
      * @param comptroller Pool's Comptroller
      * @param metadata_ New pool metadata
      */
-    function updatePoolMetadata(address comptroller, VenusPoolMetaData calldata metadata_) external {
-        _checkAccessAllowed("updatePoolMetadata(address,VenusPoolMetaData)");
-        VenusPoolMetaData memory oldMetadata = metadata[comptroller];
+    function updatePoolMetadata(address comptroller, EnclabsPoolMetaData calldata metadata_) external {
+        _checkAccessAllowed("updatePoolMetadata(address,EnclabsPoolMetaData)");
+        EnclabsPoolMetaData memory oldMetadata = metadata[comptroller];
         metadata[comptroller] = metadata_;
         emit PoolMetadataUpdated(comptroller, oldMetadata, metadata_);
     }
 
     /**
-     * @notice Returns arrays of all Venus pools' data
+     * @notice Returns arrays of all Enclabs pools' data
      * @dev This function is not designed to be called in a transaction: it is too gas-intensive
      * @return A list of all pools within PoolRegistry, with details for each pool
      */
-    function getAllPools() external view override returns (VenusPool[] memory) {
+    function getAllPools() external view override returns (EnclabsPool[] memory) {
         uint256 numberOfPools_ = _numberOfPools; // storage load to save gas
-        VenusPool[] memory _pools = new VenusPool[](numberOfPools_);
+        EnclabsPool[] memory _pools = new EnclabsPool[](numberOfPools_);
         for (uint256 i = 1; i <= numberOfPools_; ++i) {
             address comptroller = _poolsByID[i];
             _pools[i - 1] = (_poolByComptroller[comptroller]);
@@ -246,17 +246,17 @@ contract PoolRegistry is Ownable2StepUpgradeable, AccessControlledV8, PoolRegist
 
     /**
      * @param comptroller The comptroller proxy address associated to the pool
-     * @return  Returns Venus pool
+     * @return  Returns Enclabs pool
      */
-    function getPoolByComptroller(address comptroller) external view override returns (VenusPool memory) {
+    function getPoolByComptroller(address comptroller) external view override returns (EnclabsPool memory) {
         return _poolByComptroller[comptroller];
     }
 
     /**
-     * @param comptroller comptroller of Venus pool
-     * @return Returns Metadata of Venus pool
+     * @param comptroller comptroller of Enclabs pool
+     * @return Returns Metadata of Enclabs pool
      */
-    function getVenusPoolMetadata(address comptroller) external view override returns (VenusPoolMetaData memory) {
+    function getEnclabsPoolMetadata(address comptroller) external view override returns (EnclabsPoolMetaData memory) {
         return metadata[comptroller];
     }
 
@@ -269,13 +269,13 @@ contract PoolRegistry is Ownable2StepUpgradeable, AccessControlledV8, PoolRegist
     }
 
     /**
-     * @dev Adds a new Venus pool to the directory (without checking msg.sender).
+     * @dev Adds a new Enclabs pool to the directory (without checking msg.sender).
      * @param name The name of the pool
      * @param comptroller The pool's Comptroller proxy contract address
-     * @return The index of the registered Venus pool
+     * @return The index of the registered Enclabs pool
      */
     function _registerPool(string calldata name, address comptroller) internal returns (uint256) {
-        VenusPool storage storedPool = _poolByComptroller[comptroller];
+        EnclabsPool storage storedPool = _poolByComptroller[comptroller];
 
         require(storedPool.creator == address(0), "PoolRegistry: Pool already exists in the directory.");
         _ensureValidName(name);
@@ -283,7 +283,7 @@ contract PoolRegistry is Ownable2StepUpgradeable, AccessControlledV8, PoolRegist
         ++_numberOfPools;
         uint256 numberOfPools_ = _numberOfPools; // cache on stack to save storage read gas
 
-        VenusPool memory pool = VenusPool(name, msg.sender, comptroller, block.number, block.timestamp);
+        EnclabsPool memory pool = EnclabsPool(name, msg.sender, comptroller, block.number, block.timestamp);
 
         _poolsByID[numberOfPools_] = comptroller;
         _poolByComptroller[comptroller] = pool;
