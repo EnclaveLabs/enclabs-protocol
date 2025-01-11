@@ -29,7 +29,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const adminAccount = deployer;
 
     console.log(`Granting DEFAULT_ADMIN_ROLE to ${adminAccount} for ${networkName} network`);
-    await acm.grantRole(acm.DEFAULT_ADMIN_ROLE(), adminAccount);
+    //await acm.grantRole(acm.DEFAULT_ADMIN_ROLE(), adminAccount);
 
     // console.log(`Checking if ${adminAccount} already has DEFAULT_ADMIN_ROLE`);
     // const hasRole = await acm.hasRole(await acm.DEFAULT_ADMIN_ROLE(), adminAccount);
@@ -53,6 +53,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     await acm.grantRole(acm.DEFAULT_ADMIN_ROLE(), timelockAddress);
   }
+
+   // Verify the contract
+   await hre.run("verify:verify", {
+    address: await acm.address,
+    constructorArguments: []
+  });
 };
 
 func.tags = ["AccessControl"];

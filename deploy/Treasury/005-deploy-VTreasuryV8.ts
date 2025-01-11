@@ -27,6 +27,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
    
     arbitrumone: "0x705A1AC9c9e57cc78993Ab8c0C8AAeb75657e02a", // deployer tofix multisig
    
+    sonic: deployer,
   };
 
   const deployerSigner = await hre.ethers.getSigner(deployer);

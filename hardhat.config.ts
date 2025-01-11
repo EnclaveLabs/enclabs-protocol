@@ -163,23 +163,7 @@ task("createPool", "Creates a pool via PoolRegistry")
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [
-      {
-        version: "0.8.0-0.8.3",
-        settings: {
-          optimizer: {
-            enabled: true,
-            details: {
-              yul: !process.env.CI,
-            },
-          },
-          evmVersion: "paris",
-          outputSelection: {
-            "*": {
-              "*": ["storageLayout"],
-            },
-          },
-        },
-      },
+      
       {
         version: "0.8.25",
         settings: {
@@ -339,7 +323,7 @@ const config: HardhatUserConfig = {
         network: "sonic",
         chainId: 146,
         urls: {
-          apiURL: "https://sonicscan.org/api",
+          apiURL: "https://api.sonicscan.org",
           browserURL: "https://sonicscan.org"
         }
       },
@@ -443,7 +427,7 @@ const config: HardhatUserConfig = {
       arbitrumsepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       opsepolia: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
       opmainnet: process.env.ETHERSCAN_API_KEY || "ETHERSCAN_API_KEY",
-      sonic: process.env.SONICSAN_API_KEY || "SONICSAN_API_KEY",
+      sonic: process.env.SONICSCAN_API_KEY || "SONICSCAN_API_KEY",
     },
   },
   paths: {

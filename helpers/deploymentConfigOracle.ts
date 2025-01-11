@@ -1,17 +1,7 @@
-// import arbitrumoneGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/arbitrumone.json";
-// import arbitrumsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/arbitrumsepolia.json";
-// import bscmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bscmainnet.json";
-// import bsctestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/bsctestnet.json";
-// import ethereumGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/ethereum.json";
-// import opbnbmainnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbmainnet.json";
-// import opbnbtestnetGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/opbnbtestnet.json";
-// import sepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/sepolia.json";
-// import zksyncsepoliaGovernanceDeployments from "@venusprotocol/governance-contracts/deployments/zksyncsepolia.json";
-// import mainnetDeployments from "@venusprotocol/venus-protocol/deployments/bscmainnet.json";
-// import testnetDeployments from "@venusprotocol/venus-protocol/deployments/bsctestnet.json";
 import { BigNumber, Contract } from "ethers";
 import { ethers } from "hardhat";
 import { contracts as governanceArbitrumOne } from "../deployments/arbitrumone.json";
+import { contracts as governanceSonic } from "../deployments/sonic.json";
 export interface Feed {
   [key: string]: string;
 }
@@ -85,6 +75,13 @@ const STALE_PERIOD_26H = 60 * 60 * 26; // 26 hours (pricefeeds with heartbeat of
 export const ANY_CONTRACT = ethers.constants.AddressZero;
 
 export const ADDRESSES: PreconfiguredAddresses = {
+  sonic: {
+    vBNBAddress: ethers.constants.AddressZero,
+    WBNBAddress: ethers.constants.AddressZero,
+    VAIAddress: ethers.constants.AddressZero,
+    acm: "0x97DeDEA6ddfB3F2dAf5EC347AA61458f4A1803A8",
+    timelock: governanceSonic.NormalTimelock.address, 
+  },
   arbitrumone: {
     vBNBAddress: ethers.constants.AddressZero,
     WBNBAddress: ethers.constants.AddressZero,
@@ -116,6 +113,9 @@ export const chainlinkFeed: Config = {
     weETH: "0x20bAe7e1De9c596f5F7615aeaa1342Ba99294e12" //exchangerate should be onejumporacle 
    
   },
+  sonic: {
+
+  },
   
 };
 
@@ -124,6 +124,9 @@ export const redstoneFeed: Config = {
   arbitrumone: {
    
   },
+  sonic: {
+
+  },
   
 };
 
@@ -131,12 +134,18 @@ export const pythID: Config = {
   arbitrumone: {
     
   },
+  sonic: {
+
+  },
 };
 export const pendleMarket: Config = {
   
   arbitrumone: {
     PTweETH_26JUN2025: "0xbf5e60ddf654085f80dae9dd33ec0e345773e1f8",
    
+  },
+  sonic: {
+
   },
   
 };
@@ -215,6 +224,15 @@ export const assets: Assets = {
 
     },
   ],
+  sonic: [
+    {
+      token: "WBTC",
+      address: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+      oracle: "chainlink",
+    },
+
+
+  ],
 };
 
 export const getOraclesData = async (): Promise<Oracles> => {
@@ -225,7 +243,7 @@ export const getOraclesData = async (): Promise<Oracles> => {
   const twapOracle = await ethers.getContractOrNull("TwapOracle");
   const uniswapV3Oracle = await ethers.getContractOrNull("UniswapV3Oracle");
   //const binanceOracle = await ethers.getContractOrNull("BinanceOracle");
-  //const pythOracle = await ethers.getContractOrNull("PythOracle");
+  const pythOracle = await ethers.getContractOrNull("PythOracle");
 
 
   const oraclesData: Oracles = {
@@ -343,20 +361,20 @@ export const getOraclesData = async (): Promise<Oracles> => {
     //       },
     //     }
     //   : {}),
-    // ...(pythOracle
-    //   ? {
-    //       pyth: {
-    //         oracles: [pythOracle.address, addr0000, addr0000],
-    //         enableFlagsForOracles: [true, false, false],
-    //         underlyingOracle: pythOracle,
-    //         getTokenConfig: (asset: Asset, name: string) => ({
-    //           pythId: pythID[name][asset.token],
-    //           asset: asset.address,
-    //           maxStalePeriod: asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD,
-    //         }),
-    //       },
-    //     }
-    //   : {}),
+    ...(pythOracle
+      ? {
+          pyth: {
+            oracles: [pythOracle.address, addr0000, addr0000],
+            enableFlagsForOracles: [true, false, false],
+            underlyingOracle: pythOracle,
+            getTokenConfig: (asset: Asset, name: string) => ({
+              pythId: pythID[name][asset.token],
+              asset: asset.address,
+              maxStalePeriod: asset.stalePeriod ? asset.stalePeriod : DEFAULT_STALE_PERIOD,
+            }),
+          },
+        }
+      : {}),
   };
 
   return oraclesData;

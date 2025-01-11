@@ -142,4 +142,4 @@ const func: DeployFunction = async function ({
 };
 
 export default func;
-func.tags = ["deploy"];
+func.tags = ["deployResilientOracle"];

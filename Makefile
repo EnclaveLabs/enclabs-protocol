@@ -54,6 +54,16 @@ deploy_vtokens:
 # 8 - Deploy VTreasury
 deploy_vtreasury:	
 	@make deploy tags=VTreasuryV8 chain=${chain}
+# 9 - Deploy Reward Distributor
+deploy_rewarddistributor:
+	@make deploy tags=Rewards chain=${chain}
+# 10 - Transfer initial liquidity to treasury (dont forget to add treasury address in config)
+transfer_initial_liquidity:
+	@make deploy tags=InitialLiquidity chain=${chain}
+# 11 - Deploy Resilient Oracle + chainlink oracle
+deploy_resilient_oracle:
+	@make deploy tags=deployResilientOracle chain=${chain}
+
 
 
 

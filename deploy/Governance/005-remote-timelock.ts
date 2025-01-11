@@ -12,6 +12,7 @@ export enum REMOTE_NETWORKS {
   ZKSYNCSEPOLIA = "zksyncsepolia",
   ZKSYNCMAINNET = "zksyncmainnet",
   HARDHAT = "hardhat",
+  SONIC = "sonic",
 }
 type DelayTypes = {
   normal: number;
@@ -27,6 +28,11 @@ export const delayConfig: DelayConfig = {
     normal: 600,
     fast: 300,
     critical: 100,
+  },
+  sonic: {
+    normal: 172800,
+    fast: 21600,
+    critical: 3600,
   },
   sepolia: {
     normal: 600,

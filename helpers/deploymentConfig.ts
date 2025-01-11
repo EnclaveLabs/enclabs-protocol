@@ -1,4 +1,5 @@
 import { contracts as governanceArbitrumOne } from "../deployments/arbitrumone.json";
+import { contracts as governanceSonic } from "../deployments/sonic.json";
 
 import { BigNumber } from "ethers";
 import { ethers } from "hardhat";
@@ -8,6 +9,7 @@ import { convertToUnit } from "./utils";
 
 export type NetworkConfig = {
   arbitrumone: DeploymentConfig;
+  sonic: DeploymentConfig;
 };
 
 export type PreconfiguredAddresses = { [contract: string]: string };
@@ -104,14 +106,16 @@ export type BlocksPerYear = {
 
 export const blocksPerYear: BlocksPerYear = {
   arbitrumone: 0, // for time based contracts
+  sonic: 0, // for time based contracts
   isTimeBased: 0, // for time based contracts
 };
 
 
 export const ARBITRUM_ONE_MULTISIG = "0x705A1AC9c9e57cc78993Ab8c0C8AAeb75657e02a";
+export const SONIC_MULTISIG = "0xfC48EE59b365028DcC533750754330C18d359e27";
 
 const REDUCE_RESERVES_BLOCK_DELTA_ARBITRUM_ONE = "86400";
-
+const REDUCE_RESERVES_BLOCK_DELTA_SONIC = "86400";
 
 export const preconfiguredAddresses = {
   arbitrumone: {
@@ -123,6 +127,16 @@ export const preconfiguredAddresses = {
     // FastTrackTimelock: governanceArbitrumOne.FastTrackTimelock.address,
     // CriticalTimelock: governanceArbitrumOne.CriticalTimelock.address,
     AccessControlManager: governanceArbitrumOne.AccessControlManager.address,
+  },
+  sonic: {
+    VTreasury: '0x172bC36d3f092453cE6F3F9B30F1d6Ac365C4FfD', //treasury
+    //NormalTimelock: ARBITRUM_ONE_MULTISIG,
+    FastTrackTimelock: SONIC_MULTISIG,
+    CriticalTimelock: SONIC_MULTISIG,
+    NormalTimelock: governanceSonic.NormalTimelock.address,
+    // FastTrackTimelock: governanceArbitrumOne.FastTrackTimelock.address,
+    // CriticalTimelock: governanceArbitrumOne.CriticalTimelock.address,
+    AccessControlManager: governanceSonic.AccessControlManager.address,
   },
 };
 
@@ -150,6 +164,11 @@ const deployerPermissions = (): AccessControlEntry[] => {
     "addMarket(AddMarketInput)",
     "setRewardTokenSpeeds(address[],uint256[],uint256[])",
     "setReduceReservesBlockDelta(uint256)",
+    "setMarketBorrowCaps(address[],uint256[])",
+    "setMarketSupplyCaps(address[],uint256[])",
+    "setPoolName(address,string)",
+    "updatePoolMetadata(address,VenusPoolMetaData)",
+    "setProtocolSeizeShare(uint256)",
   ];
   return methods.map(method => ({
     caller: "account:deployer",
@@ -204,7 +223,127 @@ const criticalTimelockPermissions = fastTrackTimelockPermissions;
 
 export const globalConfig: NetworkConfig = {
   
-  
+  sonic: {
+    tokensConfig: [
+     
+      {
+        isMock: false,
+        name: "Wrapped Sonic",
+        symbol: "wS",
+        decimals: 18,
+        tokenAddress: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+      },
+      {
+        isMock: false,
+        name: "Bridged USDC",
+        symbol: "USDCe",
+        decimals: 6,
+        tokenAddress: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
+      },
+      {
+        isMock: false,
+        name: "Wrapped Ether",
+        symbol: "WETH",
+        decimals: 18,
+        tokenAddress: "0x50c42dEAcD8Fc9773493ED674b675bE577f2634b",
+      },
+     
+      
+    ],
+    poolConfig: [
+      {
+        id: "Core Sonic",
+        name: "Core Sonic",
+        closeFactor: convertToUnit("0.5", 18),
+        liquidationIncentive: convertToUnit("1.1", 18),
+        minLiquidatableCollateral: convertToUnit("100", 18),
+        vtokens: [
+          
+          {
+            name: "Enclabs WETH (Core)",
+            asset: "WETH",
+            symbol: "vWETH_Core",
+            rateModel: InterestRateModels.JumpRate.toString(),
+            baseRatePerYear: "0",
+            multiplierPerYear: convertToUnit("0.085", 18),
+            jumpMultiplierPerYear: convertToUnit("2.5", 18),
+            kink_: convertToUnit("0.6", 18),
+            collateralFactor: convertToUnit("0.8", 18),
+            liquidationThreshold: convertToUnit("0.85", 18),
+            reserveFactor: convertToUnit("0.2", 18),
+            initialSupply: convertToUnit("0.001", 18), 
+            supplyCap: convertToUnit("100", 18),
+            borrowCap: convertToUnit("100000", 18),
+            reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_SONIC,
+            vTokenReceiver: preconfiguredAddresses.sonic.VTreasury,
+          },
+          {
+            name: "Enclabs USDC bridged (Core)",
+            asset: "USDCe",
+            symbol: "vUSDCe_Core",
+            rateModel: InterestRateModels.JumpRate.toString(),
+            baseRatePerYear: "0",
+            multiplierPerYear: convertToUnit("0.12", 18),
+            jumpMultiplierPerYear: convertToUnit("2.5", 18),
+            kink_: convertToUnit("0.6", 18),
+            collateralFactor: convertToUnit("0.80", 18),
+            liquidationThreshold: convertToUnit("0.85", 18),
+            reserveFactor: convertToUnit("0.2", 18),
+            initialSupply: convertToUnit("5", 6), // 5,000 USDC
+            supplyCap: convertToUnit("300000", 6),
+            borrowCap: convertToUnit("5000000", 6),
+            reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_SONIC,
+            vTokenReceiver: preconfiguredAddresses.sonic.VTreasury,
+          },
+          {
+            name: "Enclabs wrapped S (Core)",
+            asset: "wS",
+            symbol: "vwS_Core",
+            rateModel: InterestRateModels.JumpRate.toString(),
+            baseRatePerYear: "0",
+            multiplierPerYear: convertToUnit("0.12", 18),
+            jumpMultiplierPerYear: convertToUnit("2.5", 18),
+            kink_: convertToUnit("0.8", 18),
+            collateralFactor: convertToUnit("0.78", 18),
+            liquidationThreshold: convertToUnit("0.80", 18),
+            reserveFactor: convertToUnit("0.2", 18),
+            initialSupply: convertToUnit("5", 18), // 5s
+            supplyCap: convertToUnit("500000", 18),
+            borrowCap: convertToUnit("5000000", 18),
+            reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_SONIC,
+            vTokenReceiver: preconfiguredAddresses.sonic.VTreasury,
+          },
+          
+        ],
+        rewards: [
+          // XVS Rewards Over 90 days (7776000 seconds)
+          // WETH:    510 XVS for Suppliers
+          //          765 XVS for Borrowers
+          // WBTC:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // USDT:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // USDC:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // ARB:     510 XVS for Suppliers
+          //          765 XVS for Borrowers
+          // {
+          //   asset: "USDT",
+          //   markets: ["WETH", "USDT", "USDC"],
+          //   supplySpeeds: ["655864197530", "1311728395061", "1311728395061"], //careful with decimals
+          //   borrowSpeeds: ["983796296296", "1967592592592", "1967592592592"],
+          // },
+        ],
+      },
+      
+    ],
+    accessControlConfig: [
+      ...poolRegistryPermissions(),
+      ...normalTimelockPermissions(preconfiguredAddresses.sonic.NormalTimelock),
+      ...deployerPermissions(),
+    ],
+    preconfiguredAddresses: preconfiguredAddresses.sonic,
+  },
   
   
   
@@ -510,6 +649,8 @@ export async function getConfig(networkName: string): Promise<DeploymentConfig> 
     
     case "arbitrumone":
       return globalConfig.arbitrumone;
+    case "sonic":
+      return globalConfig.sonic;
     
     default:
       throw new Error(`config for network ${networkName} is not available.`);
