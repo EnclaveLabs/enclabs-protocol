@@ -388,7 +388,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   //const owner = preconfiguredAddresses.NormalTimelock || deployer; //TOFIX
   const owner =  deployer; //tofix should be timelock
   const commands = [
-    //...(await configureAccessControls(deploymentConfig, hre)), // once TOFIX uncomment for new instance
+    ...(await configureAccessControls(deploymentConfig, hre)), // once TOFIX uncomment for new instance
     //...(await acceptOwnership("PoolRegistry", owner, hre)), //once
     ...(await addPools(unregisteredPools, owner, hre)),
     ...(await addMarkets(unregisteredVTokens, deploymentConfig, hre)),

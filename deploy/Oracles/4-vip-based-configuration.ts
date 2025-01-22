@@ -14,6 +14,7 @@ import {
   getOraclesData,
 } from "../../helpers/deploymentConfigOracle";
 import { deploy } from "@openzeppelin/hardhat-upgrades/dist/utils";
+import { PythOracle } from "../../typechain";
 
 interface GovernanceCommand {
   contract: string;
@@ -27,6 +28,7 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
   const networkName = hre.network.name;
 
   const resilientOracle = await hre.ethers.getContract("ResilientOracle");
+  const PythOracle = await hre.ethers.getContractOrNull("PythOracle");
   //const binanceOracle = await hre.ethers.getContractOrNull("BinanceOracle");
   const pendlePTOracle = await hre.ethers.getContractOrNull("PendlePtOracle");
   const twapOracle = await hre.ethers.getContractOrNull("TwapOracle");
@@ -118,6 +120,19 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
         argTypes: ["tuple(address,address,uint24,uint32,address,address,address)"],
         value: 0,
         parameters: [[tokenConfig.tokenA, tokenConfig.tokenB, tokenConfig.fee, tokenConfig.twapWindow, tokenConfig.baseToken, tokenConfig.quoteToken, tokenConfig.pool]],
+      });
+    }
+
+    if (oraclesData[oracle].underlyingOracle.address === PythOracle?.address  && getTokenConfig !== undefined &&
+      getDirectPriceConfig === undefined) {
+      const tokenConfig: any = getTokenConfig(asset, networkName);
+      
+      commands.push({
+        contract: oraclesData[oracle].underlyingOracle.address,
+        signature: "setTokenConfig((bytes32,address,uint64))",
+        argTypes: ["tuple(bytes32,address,uint64)"],
+        value: 0,
+        parameters: [[tokenConfig.pythId, tokenConfig.asset, tokenConfig.maxStalePeriod]],
       });
     }
 
@@ -224,8 +239,8 @@ const configureAccessControls = async (hre: HardhatRuntimeEnvironment): Promise<
   const networkName = hre.network.name;
   const accessControlManagerAddress = ADDRESSES[networkName].acm;
 
-  //const accessControlConfig: AccessControlEntry[] = timelockOraclePermissions(ADDRESSES[networkName].timelock);
-  const accessControlConfig: AccessControlEntry[] = timelockOraclePermissions("0x705A1AC9c9e57cc78993Ab8c0C8AAeb75657e02a"); //tofix
+  const accessControlConfig: AccessControlEntry[] = timelockOraclePermissions(ADDRESSES[networkName].deployerAddress); //tofix timelock
+  
   const accessControlManager = await ethers.getContractAt<AccessControlManager>(
     "AccessControlManager",
     accessControlManagerAddress,
@@ -273,8 +288,8 @@ const executeCommands = async (commands: GovernanceCommand[], hre: HardhatRuntim
 };
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  //const owner = ADDRESSES[hre.network.name].timelock;
-  const owner = "0x705A1AC9c9e57cc78993Ab8c0C8AAeb75657e02a"; //tofix
+  const owner = ADDRESSES[hre.network.name].deployerAddress; //tofix timelock
+  
   console.log(`owner: ${owner}`);
   const commands = [
     //...(await configureAccessControls(hre)),

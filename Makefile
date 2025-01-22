@@ -63,10 +63,17 @@ transfer_initial_liquidity:
 # 11 - Deploy Resilient Oracle + chainlink oracle
 deploy_resilient_oracle:
 	@make deploy tags=deployResilientOracle chain=${chain}
+# 12 - Deploy other oracles depndening on needs + config 
 
+# 13 - Deploy VIPOracles config
+	@make deploy tags=VIP-Oracle chain=${chain} 
 
+# 14 - Deploy VIP config
+	@make deploy tags=VIP chain=${chain} 
+# 15 deploy subgraph + rename function enclabsPoolMetadata
 
-
+#16 - Deploy NativeTokenGateway (add wrapped address first)
+	@make deploy tags=NativeTokenGateway chain=${chain} 
 
 #TODO
 #12 - TransferPoolOwnership 

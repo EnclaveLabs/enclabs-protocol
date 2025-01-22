@@ -40,10 +40,10 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
   const redStoneOracle = await hre.ethers.getContract("RedStoneOracle");
   const redStoneOracleOwner = await redStoneOracle.owner();
 
-  if (redStoneOracleOwner === deployer && network.live) {
-    await redStoneOracle.transferOwnership(proxyOwnerAddress);
-    console.log(`Ownership of RedstoneOracle transfered from deployer to Timelock (${proxyOwnerAddress})`);
-  }
+  // if (redStoneOracleOwner === deployer && network.live) {
+  //   await redStoneOracle.transferOwnership(proxyOwnerAddress);
+  //   console.log(`Ownership of RedstoneOracle transfered from deployer to Timelock (${proxyOwnerAddress})`);
+  // }
 };
 
 func.tags = ["deploy-redstone"];

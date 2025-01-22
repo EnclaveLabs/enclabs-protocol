@@ -68,10 +68,10 @@ const func: DeployFunction = async function ({
   const twapOracleOwner = await twapOracle.owner();
   await accessControlManager?.giveCallPermission(twapOracle.address, "setTokenConfig(TokenConfig)", deployer);
   
-  if (twapOracleOwner === deployer) {
-    await twapOracle.transferOwnership(timelock);
-    console.log(`Ownership of TwapOracle transfered from deployer to Timelock (${timelock})`);
-  }
+  // if (twapOracleOwner === deployer) {
+  //   await twapOracle.transferOwnership(timelock);
+  //   console.log(`Ownership of TwapOracle transfered from deployer to Timelock (${timelock})`);
+  // }
 
 
  

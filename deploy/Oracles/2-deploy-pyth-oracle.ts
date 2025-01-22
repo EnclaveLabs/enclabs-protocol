@@ -33,10 +33,10 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     const pythOracle = await hre.ethers.getContract("PythOracle");
     const pythOracleOwner = await pythOracle.owner();
 
-    if (pythOracleOwner === deployer) {
-      await pythOracle.transferOwnership(timelock);
-      console.log(`Ownership of PythOracle transfered from deployer to Timelock (${timelock})`);
-    }
+    // if (pythOracleOwner === deployer) {
+    //   await pythOracle.transferOwnership(timelock);
+    //   console.log(`Ownership of PythOracle transfered from deployer to Timelock (${timelock})`);
+    // }
   }
 };
 func.tags = ["deploy-pyth-oracle"];

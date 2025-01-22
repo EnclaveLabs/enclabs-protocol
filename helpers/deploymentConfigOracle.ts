@@ -81,6 +81,10 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: "0x97DeDEA6ddfB3F2dAf5EC347AA61458f4A1803A8",
     timelock: governanceSonic.NormalTimelock.address, 
+    pythOracleAddress: "0x2880aB155794e7179c9eE2e38200202908C17B43",
+    deployerAddress: "0xfC48EE59b365028DcC533750754330C18d359e27",
+    wOS: "0x9F0dF7799f6FDAd409300080cfF680f5A23df4b1",
+    WS: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
   },
   arbitrumone: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -135,7 +139,9 @@ export const pythID: Config = {
     
   },
   sonic: {
-
+      wS: "0xf490b178d0c85683b7a0f2388b40af2e6f7c90cbe0f96b31f315f08d0e5a2d6d",
+      WETH: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+      USDCe: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
   },
 };
 export const pendleMarket: Config = {
@@ -226,18 +232,27 @@ export const assets: Assets = {
   ],
   sonic: [
     {
-      token: "WBTC",
-      address: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
-      oracle: "chainlink",
+      token: "WETH",
+      address: "0x50c42dEAcD8Fc9773493ED674b675bE577f2634b",
+      oracle: "pyth",
     },
-
+    {
+      token: "wS",
+      address: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+      oracle: "pyth",
+    },
+    {
+      token: "USDCe",
+      address: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
+      oracle: "pyth",
+    },
 
   ],
 };
 
 export const getOraclesData = async (): Promise<Oracles> => {
   const chainlinkOracle = await ethers.getContractOrNull("SequencerChainlinkOracle"); //SequencerChainlinkOracle or ChainlinkOracle depending of L1 or L2
-  //const redstoneOracle = await ethers.getContractOrNull("RedStoneOracle");
+  const redstoneOracle = await ethers.getContractOrNull("RedStoneOracle");
   const pendlePTOracle = await ethers.getContractOrNull("PendlePtOracle");
   const onejumpchainlinkOracle = await ethers.getContractOrNull("OneJumpOracleV2");
   const twapOracle = await ethers.getContractOrNull("TwapOracle");

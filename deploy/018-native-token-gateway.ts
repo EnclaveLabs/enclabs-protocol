@@ -2,6 +2,7 @@ import { ethers } from "hardhat";
 import { DeployFunction } from "hardhat-deploy/types";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
 
+import { contracts as ilSonic } from "../deployments/sonic.json";
 import { contracts as ilArbOne } from "../deployments/arbitrumone.json";
 import { contracts as ilArbSepolia } from "../deployments/arbitrumsepolia.json";
 import { contracts as ilBscMainnet } from "../deployments/bscmainnet.json";
@@ -21,88 +22,24 @@ interface VTokenConfig {
 }
 
 const VWNativeInfo: { [key: string]: VTokenConfig[] } = {
-  bsctestnet: [
+  sonic: [
     {
-      name: "vWBNB_LiquidStakedBNB",
-      address: ilBscTestnet.VToken_vWBNB_LiquidStakedBNB.address,
+      name: "vwS_Core",
+      address: "0xc96a4cd13C8fCB9886DE0CdF7152B9F930D67E96",
     },
   ],
-  bscmainnet: [
-    {
-      name: "vWBNB_LiquidStakedBNB",
-      address: ilBscMainnet.VToken_vWBNB_LiquidStakedBNB.address,
-    },
-  ],
-  sepolia: [
-    {
-      name: "vWETH_Core",
-      address: ilSepolia.VToken_vWETH_Core.address,
-    },
-    {
-      name: "vWETH_LiquidStakedETH",
-      address: ilSepolia.VToken_vWETH_LiquidStakedETH.address,
-    },
-  ],
-  ethereum: [
-    {
-      name: "vWETH_Core",
-      address: ilEthereum.VToken_vWETH_Core.address,
-    },
-    {
-      name: "vWETH_LiquidStakedETH",
-      address: ilEthereum.VToken_vWETH_LiquidStakedETH.address,
-    },
-  ],
-  opbnbtestnet: [
-    {
-      name: "vWBNB_Core",
-      address: ilOpbnbTestnet.VToken_vWBNB_Core.address,
-    },
-  ],
-  opbnbmainnet: [
-    {
-      name: "vWBNB_Core",
-      address: ilOpbnbMainnet.VToken_vWBNB_Core.address,
-    },
-  ],
-  arbitrumsepolia: [
-    {
-      name: "vWETH_Core",
-      address: ilArbSepolia.VToken_vWETH_Core.address,
-    },
-    {
-      name: "vWETH_LiquidStakedETH",
-      address: ilArbSepolia.VToken_vWETH_LiquidStakedETH.address,
-    },
-  ],
-  arbitrumone: [
-    {
-      name: "vWETH_Core",
-      address: ilArbOne.VToken_vWETH_Core.address,
-    },
-    {
-      name: "vWETH_LiquidStakedETH",
-      address: ilArbOne.VToken_vWETH_LiquidStakedETH.address,
-    },
-  ],
-  zksyncsepolia: [
-    {
-      name: "vWETH_Core",
-      address: ilZkSepolia.VToken_vWETH_Core.address,
-    },
-  ],
-  zksyncmainnet: [
-    {
-      name: "vWETH_Core",
-      address: ilZkMainnet.VToken_vWETH_Core.address,
-    },
-  ],
-  opsepolia: [
-    {
-      name: "vWETH_Core",
-      address: ilOpSepolia.VToken_vWETH_Core.address,
-    },
-  ],
+  
+  // arbitrumone: [
+  //   {
+  //     name: "vWETH_Core",
+  //     address: ilArbOne.VToken_vWETH_Core.address,
+  //   },
+  //   {
+  //     name: "vWETH_LiquidStakedETH",
+  //     address: ilArbOne.VToken_vWETH_LiquidStakedETH.address,
+  //   },
+  // ],
+  
 };
 
 const getVWNativeTokens = (networkName: string): VTokenConfig[] => {
