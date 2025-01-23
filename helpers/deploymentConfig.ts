@@ -247,6 +247,13 @@ export const globalConfig: NetworkConfig = {
         decimals: 18,
         tokenAddress: "0x50c42dEAcD8Fc9773493ED674b675bE577f2634b",
       },
+      {
+        isMock: false,
+        name: "Wrapped Origin Sonic",
+        symbol: "wOS",
+        decimals: 18,
+        tokenAddress: "0x9F0dF7799f6FDAd409300080cfF680f5A23df4b1",
+      },
      
       
     ],
@@ -310,6 +317,90 @@ export const globalConfig: NetworkConfig = {
             initialSupply: convertToUnit("5", 18), // 5s
             supplyCap: convertToUnit("500000", 18),
             borrowCap: convertToUnit("5000000", 18),
+            reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_SONIC,
+            vTokenReceiver: preconfiguredAddresses.sonic.VTreasury,
+          },
+          
+        ],
+        rewards: [
+          // XVS Rewards Over 90 days (7776000 seconds)
+          // WETH:    510 XVS for Suppliers
+          //          765 XVS for Borrowers
+          // WBTC:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // USDT:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // USDC:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // ARB:     510 XVS for Suppliers
+          //          765 XVS for Borrowers
+          // {
+          //   asset: "USDT",
+          //   markets: ["WETH", "USDT", "USDC"],
+          //   supplySpeeds: ["655864197530", "1311728395061", "1311728395061"], //careful with decimals
+          //   borrowSpeeds: ["983796296296", "1967592592592", "1967592592592"],
+          // },
+        ],
+      },
+      {
+        id: "LiquidStakedS",
+        name: "Liquid Staked S",
+        closeFactor: convertToUnit("0.5", 18),
+        liquidationIncentive: convertToUnit("1.03", 18),
+        minLiquidatableCollateral: convertToUnit("100", 18),
+        vtokens: [
+          
+          {
+            name: "Enclabs wrapped S (Liquid Staked S)",
+            asset: "wS",
+            symbol: "vWS_LiquidStakedS",
+            rateModel: InterestRateModels.JumpRate.toString(),
+            baseRatePerYear: convertToUnit("0.02", 18),
+            multiplierPerYear: convertToUnit("0.15", 18),
+            jumpMultiplierPerYear: convertToUnit("3.5", 18),
+            kink_: convertToUnit("0.85", 18),
+            collateralFactor: convertToUnit("0.92", 18),
+            liquidationThreshold: convertToUnit("0.95", 18),
+            reserveFactor: convertToUnit("0.2", 18),
+            initialSupply: convertToUnit("5", 18), 
+            supplyCap: convertToUnit("1000000", 18),
+            borrowCap: convertToUnit("1000000", 18),
+            reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_SONIC,
+            vTokenReceiver: preconfiguredAddresses.sonic.VTreasury,
+          },
+          {
+            name: "Enclabs USDC bridged (Liquid Staked S)",
+            asset: "USDCe",
+            symbol: "vUSDCe_LiquidStakedS",
+            rateModel: InterestRateModels.JumpRate.toString(),
+            baseRatePerYear: convertToUnit("0.04", 18),
+            multiplierPerYear: convertToUnit("0.25", 18),
+            jumpMultiplierPerYear: convertToUnit("2.5", 18),
+            kink_: convertToUnit("0.8", 18),
+            collateralFactor: convertToUnit("0.80", 18),
+            liquidationThreshold: convertToUnit("0.85", 18),
+            reserveFactor: convertToUnit("0.2", 18),
+            initialSupply: convertToUnit("5", 6), // 5,000 USDC
+            supplyCap: convertToUnit("500000", 6),
+            borrowCap: convertToUnit("500000", 6),
+            reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_SONIC,
+            vTokenReceiver: preconfiguredAddresses.sonic.VTreasury,
+          },
+          {
+            name: "Enclabs wrapped Origin Sonic (Liquid Staked S)",
+            asset: "wOS",
+            symbol: "vwOS_LiquidStakedS",
+            rateModel: InterestRateModels.JumpRate.toString(),
+            baseRatePerYear: convertToUnit("0", 18),
+            multiplierPerYear: convertToUnit("0.15", 18),
+            jumpMultiplierPerYear: convertToUnit("3.5", 18),
+            kink_: convertToUnit("0.85", 18),
+            collateralFactor: convertToUnit("0.92", 18),
+            liquidationThreshold: convertToUnit("0.95", 18),
+            reserveFactor: convertToUnit("0.2", 18),
+            initialSupply: convertToUnit("5", 18), // 5s
+            supplyCap: convertToUnit("1000000", 18),
+            borrowCap: convertToUnit("0", 18),
             reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_SONIC,
             vTokenReceiver: preconfiguredAddresses.sonic.VTreasury,
           },

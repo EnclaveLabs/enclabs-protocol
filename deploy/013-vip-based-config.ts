@@ -199,7 +199,7 @@ const transferInitialLiquidity = async (
       contract: preconfiguredAddresses.VTreasury,
       signature: "withdrawTreasuryToken(address,uint256,address)",
       argTypes: ["address", "uint256", "address"],
-      parameters: [tokenContract.address, initialSupply, deployer], //TOFIX: deployer should be the timelock
+      parameters: [tokenContract.address, initialSupply, deployer], //TOFIX: deployer but should be the timelock that transfer to treasury
       value: 0,
     },
   ];
@@ -388,7 +388,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   //const owner = preconfiguredAddresses.NormalTimelock || deployer; //TOFIX
   const owner =  deployer; //tofix should be timelock
   const commands = [
-    ...(await configureAccessControls(deploymentConfig, hre)), // once TOFIX uncomment for new instance
+    //...(await configureAccessControls(deploymentConfig, hre)), // once TOFIX uncomment for new instance
     //...(await acceptOwnership("PoolRegistry", owner, hre)), //once
     ...(await addPools(unregisteredPools, owner, hre)),
     ...(await addMarkets(unregisteredVTokens, deploymentConfig, hre)),
