@@ -27,6 +27,10 @@ const VWNativeInfo: { [key: string]: VTokenConfig[] } = {
       name: "vwS_Core",
       address: "0xc96a4cd13C8fCB9886DE0CdF7152B9F930D67E96",
     },
+    {
+      name: "vwS_LiquidStakedS",
+      address: "0x876e062420fB9a4861968EC2E0FF91be88142343",
+    },
   ],
   
   // arbitrumone: [

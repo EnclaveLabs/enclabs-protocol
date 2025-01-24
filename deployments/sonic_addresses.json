@@ -35,7 +35,8 @@
       "VToken_vWS_LiquidStakedS": "0x876e062420fB9a4861968EC2E0FF91be88142343",
       "VToken_vwOS_LiquidStakedS": "0x7FD79432cC704582235DF11b92b783f07ED40e13",
       "VToken_vUSDCe_LiquidStakedS": "0xb64b8585CeCe0E314d344c7f6437D97bF1eB0FE7",
-      "WOSOracle": "0x233F1c2DF407FE0e5c71986b805f138519d88Be4"
+      "WOSOracle": "0x233F1c2DF407FE0e5c71986b805f138519d88Be4",
+      "NativeTokenGateway_vwS_LiquidStakedS": "0x947329B3fc503c1F8C9EE9bdA244B17D9b052870"
 
       
     }
