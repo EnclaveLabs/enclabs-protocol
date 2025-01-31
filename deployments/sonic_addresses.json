@@ -36,7 +36,17 @@
       "VToken_vwOS_LiquidStakedS": "0x7FD79432cC704582235DF11b92b783f07ED40e13",
       "VToken_vUSDCe_LiquidStakedS": "0xb64b8585CeCe0E314d344c7f6437D97bF1eB0FE7",
       "WOSOracle": "0x233F1c2DF407FE0e5c71986b805f138519d88Be4",
-      "NativeTokenGateway_vwS_LiquidStakedS": "0x947329B3fc503c1F8C9EE9bdA244B17D9b052870"
+      "NativeTokenGateway_vwS_LiquidStakedS": "0x947329B3fc503c1F8C9EE9bdA244B17D9b052870",
+      "Comptroller_SpectraPTscUSDPool": "0x26190C71c27e089533186338d16abB2ba9528969",
+      "JumpRateModelV2_base0bps_slope2500bps_jump25000bps_kink8000bps": "0x24bf212592E2f5606571686C411e09C1170752A8",
+      "JumpRateModelV2_base100bps_slope500bps_jump35000bps_kink8500bps": "0x11707495F59974dE0762c4c64839Ea6B9c986C30",
+      "SpectrawstscUSDJune3025Oracle_Implementation": "0xd7E6bA514dD758f6e7637A8421c29395367Bdb1d",
+      "SpectrawstscUSDJune3025Oracle_Proxy": "0x2E08C971Ac136D8590bA187F80823c0576343A89",
+      "VToken_vPT-sw-wstkscUSD-1751241607_SpectraPTscUSDPool": "0xD1e8eC6EaeD325006731F816f41fd5483373A8f2",
+      "VToken_vscUSD_SpectraPTscUSDPool": "0x7D47cBf5FE9cCF2F99D0C2E8a3c59FB3498bc21b"
+
+
+
 
       
     }

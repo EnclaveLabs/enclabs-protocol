@@ -254,6 +254,20 @@ export const globalConfig: NetworkConfig = {
         decimals: 18,
         tokenAddress: "0x9F0dF7799f6FDAd409300080cfF680f5A23df4b1",
       },
+      {
+        isMock: false,
+        name: "Sonic USD",
+        symbol: "scUSD",
+        decimals: 6,
+        tokenAddress: "0xd3DCe716f3eF535C5Ff8d041c1A41C3bd89b97aE",
+      },
+      {
+        isMock: false,
+        name: "Principal Token: sw-wstkscUSD-1751241607",
+        symbol: "PT-sw-wstkscUSD-1751241607",
+        decimals: 6,
+        tokenAddress: "0x7002383d2305b8f3b2b7786f50c13d132a22076d",
+      },
      
       
     ],
@@ -401,6 +415,72 @@ export const globalConfig: NetworkConfig = {
             initialSupply: convertToUnit("5", 18), // 5s
             supplyCap: convertToUnit("1000000", 18),
             borrowCap: convertToUnit("0", 18),
+            reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_SONIC,
+            vTokenReceiver: preconfiguredAddresses.sonic.VTreasury,
+          },
+          
+        ],
+        rewards: [
+          // XVS Rewards Over 90 days (7776000 seconds)
+          // WETH:    510 XVS for Suppliers
+          //          765 XVS for Borrowers
+          // WBTC:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // USDT:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // USDC:    1020 XVS for Suppliers
+          //          1530 XVS for Borrowers
+          // ARB:     510 XVS for Suppliers
+          //          765 XVS for Borrowers
+          // {
+          //   asset: "USDT",
+          //   markets: ["WETH", "USDT", "USDC"],
+          //   supplySpeeds: ["655864197530", "1311728395061", "1311728395061"], //careful with decimals
+          //   borrowSpeeds: ["983796296296", "1967592592592", "1967592592592"],
+          // },
+        ],
+      },
+      {
+        id: "SpectraPTscUSDPool",
+        name: "Spectra PT scUSD Pool",
+        closeFactor: convertToUnit("0.5", 18),
+        liquidationIncentive: convertToUnit("1.1", 18),
+        minLiquidatableCollateral: convertToUnit("100", 18),
+        vtokens: [
+          
+          {
+            name: "Enclabs wrapped scUSD (SpectraPTscUSDPool)",
+            asset: "scUSD",
+            symbol: "vscUSD_SpectraPTscUSDPool",
+            rateModel: InterestRateModels.JumpRate.toString(),
+            baseRatePerYear: convertToUnit("0.01", 18),
+            multiplierPerYear: convertToUnit("0.05", 18),
+            jumpMultiplierPerYear: convertToUnit("3.5", 18),
+            kink_: convertToUnit("0.85", 18),
+            collateralFactor: convertToUnit("0.8", 18),
+            liquidationThreshold: convertToUnit("0.85", 18),
+            reserveFactor: convertToUnit("0.2", 18),
+            initialSupply: convertToUnit("5", 6), // 5,000 scUSD
+            supplyCap: convertToUnit("1000000", 6),
+            borrowCap: convertToUnit("1000000", 6),
+            reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_SONIC,
+            vTokenReceiver: preconfiguredAddresses.sonic.VTreasury,
+          },
+          {
+            name: "Enclabs PT-wstkscUSD Spectra June (SpectraPTscUSDPool)",
+            asset: "PT-sw-wstkscUSD-1751241607",
+            symbol: "vPT-sw-wstkscUSD-1751241607_SpectraPTscUSDPool",
+            rateModel: InterestRateModels.JumpRate.toString(),
+            baseRatePerYear: convertToUnit("0.00", 18),
+            multiplierPerYear: convertToUnit("0.25", 18),
+            jumpMultiplierPerYear: convertToUnit("2.5", 18),
+            kink_: convertToUnit("0.8", 18),
+            collateralFactor: convertToUnit("0", 18),
+            liquidationThreshold: convertToUnit("0.1", 18),
+            reserveFactor: convertToUnit("0.2", 18),
+            initialSupply: convertToUnit("5", 6), // ~5PT
+            supplyCap: convertToUnit("1000000", 6),
+            borrowCap: convertToUnit("0", 6),
             reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_SONIC,
             vTokenReceiver: preconfiguredAddresses.sonic.VTreasury,
           },

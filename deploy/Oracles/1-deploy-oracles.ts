@@ -42,8 +42,8 @@ const func: DeployFunction = async function ({
   const proxyOwnerAddress = network.live ? ADDRESSES[network.name].timelock : deployer;
   const vaiAddress = network.live ? ADDRESSES[network.name].VAIAddress : vai?.address;
   const vbnbAddress = network.live ? ADDRESSES[network.name].vBNBAddress : deployer;
-  const timelock = network.live ? ADDRESSES[network.name].timelock : deployer;
-
+  const timelock = network.live ? ADDRESSES[network.name].CriticalTimelock : deployer;
+console.log(timelock);
   const defaultProxyAdmin = await hre.artifacts.readArtifact(
     "hardhat-deploy/solc_0.8/openzeppelin/proxy/transparent/ProxyAdmin.sol:ProxyAdmin",
   );
@@ -124,21 +124,22 @@ const func: DeployFunction = async function ({
   const resilientOracleOwner = await resilientOracle.owner();
   const chainlinkOracleOwner = await chainlinkOracle.owner();
   const boundValidatorOwner = await boundValidator.owner();
+console.log(resilientOracleOwner, chainlinkOracleOwner, boundValidatorOwner)
+  if (resilientOracleOwner === deployer) {
+    console.log(timelock);
+    await resilientOracle.transferOwnership(timelock);
+    console.log(`Ownership of ResilientOracle transfered from deployer to Timelock (${timelock})`);
+  }
 
-  // if (resilientOracleOwner === deployer) {
-  //   await resilientOracle.transferOwnership(timelock);
-  //   console.log(`Ownership of ResilientOracle transfered from deployer to Timelock (${timelock})`);
-  // }
+  if (chainlinkOracleOwner === deployer) {
+    await chainlinkOracle.transferOwnership(timelock);
+    console.log(`Ownership of ChainlinkOracle transfered from deployer to Timelock (${timelock})`);
+  }
 
-  // if (chainlinkOracleOwner === deployer) {
-  //   await chainlinkOracle.transferOwnership(timelock);
-  //   console.log(`Ownership of ChainlinkOracle transfered from deployer to Timelock (${timelock})`);
-  // }
-
-  // if (boundValidatorOwner === deployer) {
-  //   await boundValidator.transferOwnership(timelock);
-  //   console.log(`Ownership of BoundValidator transfered from deployer to Timelock (${timelock})`);
-  // }
+  if (boundValidatorOwner === deployer) {
+    await boundValidator.transferOwnership(timelock);
+    console.log(`Ownership of BoundValidator transfered from deployer to Timelock (${timelock})`);
+  }
 };
 
 export default func;

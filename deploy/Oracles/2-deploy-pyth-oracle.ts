@@ -10,7 +10,7 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
 
   const accessControlManagerAddress = ADDRESSES[network.name].acm;
   const proxyOwnerAddress = ADDRESSES[network.name].timelock;
-  const { timelock, pythOracleAddress } = ADDRESSES[network.name];
+  const { timelock, pythOracleAddress, CriticalTimelock } = ADDRESSES[network.name];
 
   // Skip if no pythOracle address in config
   if (pythOracleAddress) {
@@ -33,10 +33,10 @@ const func: DeployFunction = async function ({ getNamedAccounts, deployments, ne
     const pythOracle = await hre.ethers.getContract("PythOracle");
     const pythOracleOwner = await pythOracle.owner();
 
-    // if (pythOracleOwner === deployer) {
-    //   await pythOracle.transferOwnership(timelock);
-    //   console.log(`Ownership of PythOracle transfered from deployer to Timelock (${timelock})`);
-    // }
+    if (pythOracleOwner === deployer) {
+      await pythOracle.transferOwnership(CriticalTimelock);
+      console.log(`Ownership of PythOracle transfered from deployer to Timelock (${CriticalTimelock})`);
+    }
   }
 };
 func.tags = ["deploy-pyth-oracle"];

@@ -51,7 +51,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const poolsWithUnregisteredVTokens = await getUnregisteredVTokens(poolConfig, hre);
   for (const pool of poolsWithUnregisteredVTokens) {
     const comptrollerProxy = await ethers.getContract(`Comptroller_${pool.id}`);
-
+console.log(pool.id);
     // Deploy Markets
     for (const vtoken of pool.vtokens) {
       const {

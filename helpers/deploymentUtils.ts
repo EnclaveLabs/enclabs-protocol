@@ -46,10 +46,12 @@ export const getUnregisteredPools = async (
   const { deployments } = hre;
   const registry = await ethers.getContract("PoolRegistry");
   const registeredPools = (await registry.getAllPools()).map((p: { comptroller: string }) => p.comptroller);
+  console.log("registeredPools", registeredPools);
   const isRegistered = await Promise.all(
     poolConfig.map(async pool => {
-      const comptroller = await deployments.getOrNull(`Comptroller_${pool.name}`);
-      if (!comptroller) {
+      
+      const comptroller = await deployments.getOrNull(`Comptroller_${pool.id}`);
+      if (!comptroller) {        
         // If the Comptroller deployment doesn't exist, it's not registered
         return false;
       }

@@ -81,10 +81,13 @@ export const ADDRESSES: PreconfiguredAddresses = {
     VAIAddress: ethers.constants.AddressZero,
     acm: "0x97DeDEA6ddfB3F2dAf5EC347AA61458f4A1803A8",
     timelock: governanceSonic.NormalTimelock.address, 
+    CriticalTimelock: governanceSonic.CriticalTimelock.address,
     pythOracleAddress: "0x2880aB155794e7179c9eE2e38200202908C17B43",
     deployerAddress: "0xfC48EE59b365028DcC533750754330C18d359e27",
     wOS: "0x9F0dF7799f6FDAd409300080cfF680f5A23df4b1",
     WS: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+    scUSD: "0xd3DCe716f3eF535C5Ff8d041c1A41C3bd89b97aE",
+    PT_sw_wstscUSD_june_30_25: "0x7002383d2305b8f3b2b7786f50c13d132a22076d",
   },
   arbitrumone: {
     vBNBAddress: ethers.constants.AddressZero,
@@ -115,10 +118,11 @@ export const chainlinkFeed: Config = {
     WETH: "0x639Fe6ab55C921f74e7fac1ee960C0B6293ba612",
     wstETH: "0xB1552C5e96B312d0Bf8b554186F846C40614a540",
     weETH: "0x20bAe7e1De9c596f5F7615aeaa1342Ba99294e12" //exchangerate should be onejumporacle 
+    
    
   },
   sonic: {
-
+    solvBTC: "0xadf6e9419E483Cc214dfC9EF1887f3aa7e85cA09"
   },
   
 };
@@ -142,6 +146,7 @@ export const pythID: Config = {
       wS: "0xf490b178d0c85683b7a0f2388b40af2e6f7c90cbe0f96b31f315f08d0e5a2d6d",
       WETH: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
       USDCe: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
+      scUSD: "0x316b1536978bee10c47b3c74c0b3995aabae973a3351621680a2aa383aca77b8",
   },
 };
 export const pendleMarket: Config = {
@@ -231,19 +236,29 @@ export const assets: Assets = {
     },
   ],
   sonic: [
+    // {
+    //   token: "WETH",
+    //   address: "0x50c42dEAcD8Fc9773493ED674b675bE577f2634b",
+    //   oracle: "pyth",
+    // },
+    // {
+    //   token: "wS",
+    //   address: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+    //   oracle: "pyth",
+    // },
+    // {
+    //   token: "USDCe",
+    //   address: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
+    //   oracle: "pyth",
+    // },
+    // {
+    //   token: "solvBTC",
+    //   address: "0x541FD749419CA806a8bc7da8ac23D346f2dF8B77",
+    //   oracle: "chainlink",
+    // },
     {
-      token: "WETH",
-      address: "0x50c42dEAcD8Fc9773493ED674b675bE577f2634b",
-      oracle: "pyth",
-    },
-    {
-      token: "wS",
-      address: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
-      oracle: "pyth",
-    },
-    {
-      token: "USDCe",
-      address: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
+      token: "scUSD",
+      address: "0xd3DCe716f3eF535C5Ff8d041c1A41C3bd89b97aE",
       oracle: "pyth",
     },
 
@@ -251,7 +266,7 @@ export const assets: Assets = {
 };
 
 export const getOraclesData = async (): Promise<Oracles> => {
-  const chainlinkOracle = await ethers.getContractOrNull("SequencerChainlinkOracle"); //SequencerChainlinkOracle or ChainlinkOracle depending of L1 or L2
+  const chainlinkOracle = await ethers.getContractOrNull("ChainlinkOracle"); //SequencerChainlinkOracle or ChainlinkOracle depending of L1 or L2
   const redstoneOracle = await ethers.getContractOrNull("RedStoneOracle");
   const pendlePTOracle = await ethers.getContractOrNull("PendlePtOracle");
   const onejumpchainlinkOracle = await ethers.getContractOrNull("OneJumpOracleV2");

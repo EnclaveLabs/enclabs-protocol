@@ -33,7 +33,7 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
   const pendlePTOracle = await hre.ethers.getContractOrNull("PendlePtOracle");
   const twapOracle = await hre.ethers.getContractOrNull("TwapOracle");
   const uniswapV3Oracle = await hre.ethers.getContractOrNull("UniswapV3Oracle");
-  const chainlinkOracle = await hre.ethers.getContractOrNull("ChainlinkOracleSequencer"); //SequencerChainlinkOracle or ChainlinkOracle depending of L1 or L2
+  const chainlinkOracle = await hre.ethers.getContractOrNull("ChainlinkOracle"); //SequencerChainlinkOracle or ChainlinkOracle depending of L1 or L2
   const oneJumpOracle = await hre.ethers.getContractOrNull("OneJumpOracleV2");
   const oraclesData: Oracles = await getOraclesData();
   const commands: GovernanceCommand[] = [];
@@ -62,6 +62,7 @@ const configurePriceFeeds = async (hre: HardhatRuntimeEnvironment): Promise<Gove
     if (oraclesData[oracle].underlyingOracle.address === chainlinkOracle?.address  && getTokenConfig !== undefined &&
       getDirectPriceConfig === undefined) {
       const tokenConfig: any = getTokenConfig(asset, networkName);
+      console.log(oracle, oraclesData[oracle])
       commands.push({
         contract: oraclesData[oracle].underlyingOracle.address,
         signature: "setTokenConfig((address,address,uint256))",
@@ -288,31 +289,33 @@ const executeCommands = async (commands: GovernanceCommand[], hre: HardhatRuntim
 };
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const owner = ADDRESSES[hre.network.name].deployerAddress; //tofix timelock
+  //const owner = ADDRESSES[hre.network.name].deployerAddress; //tofix timelock
+  const owner = ADDRESSES[hre.network.name].CriticalTimelock; //tofix timelock
   
   console.log(`owner: ${owner}`);
   const commands = [
-    //...(await configureAccessControls(hre)),
-    // ...(await acceptOwnership("ResilientOracle", owner, hre)),
-    // ...(await acceptOwnership("ChainlinkOracle", owner, hre)),
+    ...(await configureAccessControls(hre)),
+    ...(await acceptOwnership("ResilientOracle", owner, hre)),
+    ...(await acceptOwnership("ChainlinkOracle", owner, hre)),
     // ...(await acceptOwnership("RedStoneOracle", owner, hre)),
     // ...(await acceptOwnership("BoundValidator", owner, hre)),
     // ...(await acceptOwnership("BinanceOracle", owner, hre)),
     // ...(await acceptOwnership("PendlePtOracle", owner, hre)),
     // ...(await acceptOwnership("TwapOracle", owner, hre)),
     // ...(await acceptOwnership("UniswapV3Oracle", owner, hre)),
-    ...(await configurePriceFeeds(hre)),
+    //...(await configurePriceFeeds(hre)),
   ];
 
-  // if (hre.network.live) {
-  //   console.log("Please propose a VIP with the following commands:");
-  //   console.log(
-  //     JSON.stringify(commands.map(c => ({ target: c.contract, signature: c.signature, params: c.parameters }))),
-  //   );
-  // } else {
-  //   throw Error("This script is only used for live networks.");
-  // }
-  await executeCommands(commands, hre);
+  if (hre.network.live) {
+    console.log("Please propose a VIP with the following commands:");
+    console.log(
+      JSON.stringify(commands.map(c => ({ target: c.contract, signature: c.signature, params: c.parameters }))),
+    );
+  } else {
+    throw Error("This script is only used for live networks.");
+  }
+  
+  //await executeCommands(commands, hre);
 };
 
 func.tags = ["VIP-Oracle"];
