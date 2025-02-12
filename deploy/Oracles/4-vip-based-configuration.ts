@@ -240,7 +240,7 @@ const configureAccessControls = async (hre: HardhatRuntimeEnvironment): Promise<
   const networkName = hre.network.name;
   const accessControlManagerAddress = ADDRESSES[networkName].acm;
 
-  const accessControlConfig: AccessControlEntry[] = timelockOraclePermissions(ADDRESSES[networkName].deployerAddress); //tofix timelock
+  const accessControlConfig: AccessControlEntry[] = timelockOraclePermissions(ADDRESSES[networkName].CriticalTimelock); //tofix timelock
   
   const accessControlManager = await ethers.getContractAt<AccessControlManager>(
     "AccessControlManager",
@@ -256,6 +256,35 @@ const configureAccessControls = async (hre: HardhatRuntimeEnvironment): Promise<
         {
           contract: accessControlManagerAddress,
           signature: "giveCallPermission(address,string,address)",
+          argTypes: ["address", "string", "address"],
+          parameters: [target, method, caller],
+          value: 0,
+        },
+      ];
+    }),
+  );
+  return commands.flat();
+};
+const removeAccessControls = async (hre: HardhatRuntimeEnvironment): Promise<GovernanceCommand[]> => {
+  const networkName = hre.network.name;
+  const accessControlManagerAddress = ADDRESSES[networkName].acm;
+
+  const accessControlConfig: AccessControlEntry[] = timelockOraclePermissions(ADDRESSES[networkName].deployerAddress); //tofix deployer
+  
+  const accessControlManager = await ethers.getContractAt<AccessControlManager>(
+    "AccessControlManager",
+    accessControlManagerAddress,
+  );
+  const commands = await Promise.all(
+    accessControlConfig.map(async (entry: AccessControlEntry) => {
+      const { caller, target, method } = entry;
+      if (await hasPermission(accessControlManager, caller, method, target, hre)) {
+        return [];
+      }
+      return [
+        {
+          contract: accessControlManagerAddress,
+          signature: "revokeCallPermission(address,string,address)",
           argTypes: ["address", "string", "address"],
           parameters: [target, method, caller],
           value: 0,
@@ -294,20 +323,22 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   
   console.log(`owner: ${owner}`);
   const commands = [
-    ...(await configureAccessControls(hre)),
-    ...(await acceptOwnership("ResilientOracle", owner, hre)),
-    ...(await acceptOwnership("ChainlinkOracle", owner, hre)),
+    //...(await configureAccessControls(hre)),
+    //...(await removeAccessControls(hre)),
+    //...(await acceptOwnership("ResilientOracle", owner, hre)),
+    //...(await acceptOwnership("ChainlinkOracle", owner, hre)),
     // ...(await acceptOwnership("RedStoneOracle", owner, hre)),
     // ...(await acceptOwnership("BoundValidator", owner, hre)),
     // ...(await acceptOwnership("BinanceOracle", owner, hre)),
     // ...(await acceptOwnership("PendlePtOracle", owner, hre)),
     // ...(await acceptOwnership("TwapOracle", owner, hre)),
     // ...(await acceptOwnership("UniswapV3Oracle", owner, hre)),
-    //...(await configurePriceFeeds(hre)),
+    ...(await configurePriceFeeds(hre)),
   ];
 
   if (hre.network.live) {
     console.log("Please propose a VIP with the following commands:");
+    console.log(commands)
     console.log(
       JSON.stringify(commands.map(c => ({ target: c.contract, signature: c.signature, params: c.parameters }))),
     );
@@ -315,7 +346,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     throw Error("This script is only used for live networks.");
   }
   
-  //await executeCommands(commands, hre);
+  await executeCommands(commands, hre);
 };
 
 func.tags = ["VIP-Oracle"];

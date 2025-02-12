@@ -43,8 +43,9 @@
       "SpectrawstscUSDJune3025Oracle_Implementation": "0xd7E6bA514dD758f6e7637A8421c29395367Bdb1d",
       "SpectrawstscUSDJune3025Oracle_Proxy": "0x2E08C971Ac136D8590bA187F80823c0576343A89",
       "VToken_vPT-sw-wstkscUSD-1751241607_SpectraPTscUSDPool": "0xD1e8eC6EaeD325006731F816f41fd5483373A8f2",
-      "VToken_vscUSD_SpectraPTscUSDPool": "0x7D47cBf5FE9cCF2F99D0C2E8a3c59FB3498bc21b"
-
+      "VToken_vscUSD_SpectraPTscUSDPool": "0x7D47cBf5FE9cCF2F99D0C2E8a3c59FB3498bc21b",
+      "VToken_vstS_Core": "0xe544e51bF20AB186B6b7b1A9095C8BC1E3f203f5",
+      "JumpRateModelV2_base0bps_slope1800bps_jump20000bps_kink6500bps": "0xB9544C7e4fb689Bd0DecC33DE352cf14302930c2"
 
 
 

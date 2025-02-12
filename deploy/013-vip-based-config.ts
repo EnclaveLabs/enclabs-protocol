@@ -390,9 +390,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const commands = [
     //...(await configureAccessControls(deploymentConfig, hre)), // once TOFIX uncomment for new instance
     //...(await acceptOwnership("PoolRegistry", owner, hre)), //once
-    ...(await addPools(unregisteredPools, owner, hre)),
+    //...(await addPools(unregisteredPools, owner, hre)),
     ...(await addMarkets(unregisteredVTokens, deploymentConfig, hre)),
-    ...(await configureRewards(unregisteredRewardsDistributors, owner, hre)),
+    //...(await configureRewards(unregisteredRewardsDistributors, owner, hre)),
   ];
 
   // if (hre.network.live) {

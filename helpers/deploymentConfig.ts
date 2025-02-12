@@ -131,8 +131,8 @@ export const preconfiguredAddresses = {
   sonic: {
     VTreasury: '0x172bC36d3f092453cE6F3F9B30F1d6Ac365C4FfD', //treasury
     //NormalTimelock: ARBITRUM_ONE_MULTISIG,
-    FastTrackTimelock: SONIC_MULTISIG,
-    CriticalTimelock: SONIC_MULTISIG,
+    FastTrackTimelock: governanceSonic.CriticalTimelock.address,
+    CriticalTimelock: governanceSonic.CriticalTimelock.address,
     NormalTimelock: governanceSonic.NormalTimelock.address,
     // FastTrackTimelock: governanceArbitrumOne.FastTrackTimelock.address,
     // CriticalTimelock: governanceArbitrumOne.CriticalTimelock.address,
@@ -142,13 +142,13 @@ export const preconfiguredAddresses = {
 
 const poolRegistryPermissions = (): AccessControlEntry[] => {
   const methods = [
-    "setCollateralFactor(address,uint256,uint256)",
-    "setMarketSupplyCaps(address[],uint256[])",
-    "setMarketBorrowCaps(address[],uint256[])",
-    "setLiquidationIncentive(uint256)",
-    "setCloseFactor(uint256)",
-    "setMinLiquidatableCollateral(uint256)",
-    "supportMarket(address)",
+    // "setCollateralFactor(address,uint256,uint256)",
+    // "setMarketSupplyCaps(address[],uint256[])",
+    // "setMarketBorrowCaps(address[],uint256[])",
+    // "setLiquidationIncentive(uint256)",
+    // "setCloseFactor(uint256)",
+    // "setMinLiquidatableCollateral(uint256)",
+    // "supportMarket(address)",
   ];
   return methods.map(method => ({
     caller: "PoolRegistry",
@@ -159,16 +159,16 @@ const poolRegistryPermissions = (): AccessControlEntry[] => {
 
 const deployerPermissions = (): AccessControlEntry[] => {
   const methods = [
-    "swapPoolsAssets(address[],uint256[],address[][])",
-    "addPool(string,address,uint256,uint256,uint256)",
-    "addMarket(AddMarketInput)",
-    "setRewardTokenSpeeds(address[],uint256[],uint256[])",
-    "setReduceReservesBlockDelta(uint256)",
-    "setMarketBorrowCaps(address[],uint256[])",
-    "setMarketSupplyCaps(address[],uint256[])",
-    "setPoolName(address,string)",
-    "updatePoolMetadata(address,VenusPoolMetaData)",
-    "setProtocolSeizeShare(uint256)",
+    // "swapPoolsAssets(address[],uint256[],address[][])",
+    // "addPool(string,address,uint256,uint256,uint256)",
+    // "addMarket(AddMarketInput)",
+    // "setRewardTokenSpeeds(address[],uint256[],uint256[])",
+    // "setReduceReservesBlockDelta(uint256)",
+    // "setMarketBorrowCaps(address[],uint256[])",
+    // "setMarketSupplyCaps(address[],uint256[])",
+    // "setPoolName(address,string)",
+    // "updatePoolMetadata(address,VenusPoolMetaData)",
+    // "setProtocolSeizeShare(uint256)",
   ];
   return methods.map(method => ({
     caller: "account:deployer",
@@ -179,24 +179,24 @@ const deployerPermissions = (): AccessControlEntry[] => {
 
 const normalTimelockPermissions = (timelock: string): AccessControlEntry[] => {
   const methods = [
-    "setCloseFactor(uint256)",
-    "setReduceReservesBlockDelta(uint256)",
-    "setCollateralFactor(address,uint256,uint256)",
-    "setLiquidationIncentive(uint256)",
-    "setMarketBorrowCaps(address[],uint256[])",
-    "setMarketSupplyCaps(address[],uint256[])",
-    "setActionsPaused(address[],uint256[],bool)",
-    "setMinLiquidatableCollateral(uint256)",
-    "addPool(string,address,uint256,uint256,uint256)",
-    "addMarket(AddMarketInput)",
-    "setPoolName(address,string)",
-    "updatePoolMetadata(address,VenusPoolMetaData)",
-    "setProtocolSeizeShare(uint256)",
-    "setReserveFactor(uint256)",
-    "setInterestRateModel(address)",
-    "setRewardTokenSpeeds(address[],uint256[],uint256[])",
-    "setLastRewardingBlock(address[],uint32[],uint32[])",
-    "updateJumpRateModel(uint256,uint256,uint256,uint256)",
+    // "setCloseFactor(uint256)",
+    // "setReduceReservesBlockDelta(uint256)",
+    // "setCollateralFactor(address,uint256,uint256)",
+    // "setLiquidationIncentive(uint256)",
+    // "setMarketBorrowCaps(address[],uint256[])",
+    // "setMarketSupplyCaps(address[],uint256[])",
+    // "setActionsPaused(address[],uint256[],bool)",
+    // "setMinLiquidatableCollateral(uint256)",
+    // "addPool(string,address,uint256,uint256,uint256)",
+    // "addMarket(AddMarketInput)",
+    // "setPoolName(address,string)",
+    // "updatePoolMetadata(address,VenusPoolMetaData)",
+    // "setProtocolSeizeShare(uint256)",
+    // "setReserveFactor(uint256)",
+    // "setInterestRateModel(address)",
+    // "setRewardTokenSpeeds(address[],uint256[],uint256[])",
+    // "setLastRewardingBlock(address[],uint32[],uint32[])",
+    // "updateJumpRateModel(uint256,uint256,uint256,uint256)",
   ];
   return methods.map(method => ({
     caller: timelock,
@@ -232,6 +232,13 @@ export const globalConfig: NetworkConfig = {
         symbol: "wS",
         decimals: 18,
         tokenAddress: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+      },
+      {
+        isMock: false,
+        name: "Beets Staked Sonic",
+        symbol: "stS",
+        decimals: 18,
+        tokenAddress: "0xE5DA20F15420aD15DE0fa650600aFc998bbE3955",
       },
       {
         isMock: false,
@@ -279,7 +286,24 @@ export const globalConfig: NetworkConfig = {
         liquidationIncentive: convertToUnit("1.1", 18),
         minLiquidatableCollateral: convertToUnit("100", 18),
         vtokens: [
-          
+          {
+            name: "Enclabs Beets Staked Sonic (Core)",
+            asset: "stS",
+            symbol: "vstS_Core",
+            rateModel: InterestRateModels.JumpRate.toString(),
+            baseRatePerYear: "0",
+            multiplierPerYear: convertToUnit("0.18", 18),
+            jumpMultiplierPerYear: convertToUnit("2", 18),
+            kink_: convertToUnit("0.65", 18),
+            collateralFactor: convertToUnit("0.7", 18),
+            liquidationThreshold: convertToUnit("0.78", 18),
+            reserveFactor: convertToUnit("0.2", 18),
+            initialSupply: convertToUnit("10", 18), // 10sts
+            supplyCap: convertToUnit("500000", 18),
+            borrowCap: convertToUnit("500000", 18),
+            reduceReservesBlockDelta: REDUCE_RESERVES_BLOCK_DELTA_SONIC,
+            vTokenReceiver: preconfiguredAddresses.sonic.VTreasury,
+          },
           {
             name: "Enclabs WETH (Core)",
             asset: "WETH",
@@ -512,6 +536,7 @@ export const globalConfig: NetworkConfig = {
       ...poolRegistryPermissions(),
       ...normalTimelockPermissions(preconfiguredAddresses.sonic.NormalTimelock),
       ...deployerPermissions(),
+      ...fastTrackTimelockPermissions(preconfiguredAddresses.sonic.FastTrackTimelock),
     ],
     preconfiguredAddresses: preconfiguredAddresses.sonic,
   },

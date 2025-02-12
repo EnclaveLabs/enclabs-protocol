@@ -122,7 +122,11 @@ export const chainlinkFeed: Config = {
    
   },
   sonic: {
-    solvBTC: "0xadf6e9419E483Cc214dfC9EF1887f3aa7e85cA09"
+    solvBTC: "0xadf6e9419E483Cc214dfC9EF1887f3aa7e85cA09",
+    WETH: "0x5b0cf2b36a65a6BB085D501B971e4c102B9Cd473",
+    wS: "0x726D2E87d73567ecA1b75C063Bd09c1493655918",
+    USDCe: "0xD3C586Eec1C6C3eC41D276a23944dea080eDCf7f",
+    stS: "0x65d0F14f7809CdC4f90c3978c753C4671b6B815b", //redstone but same implementation
   },
   
 };
@@ -143,9 +147,9 @@ export const pythID: Config = {
     
   },
   sonic: {
-      wS: "0xf490b178d0c85683b7a0f2388b40af2e6f7c90cbe0f96b31f315f08d0e5a2d6d",
-      WETH: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
-      USDCe: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
+      //wS: "0xf490b178d0c85683b7a0f2388b40af2e6f7c90cbe0f96b31f315f08d0e5a2d6d",
+      //WETH: "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+      //USDCe: "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
       scUSD: "0x316b1536978bee10c47b3c74c0b3995aabae973a3351621680a2aa383aca77b8",
   },
 };
@@ -236,31 +240,39 @@ export const assets: Assets = {
     },
   ],
   sonic: [
+    {
+      token: "stS",
+      address: "0xE5DA20F15420aD15DE0fa650600aFc998bbE3955",
+      oracle: "onejumpchainlink",
+      correlatedTo: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
+    },
+    
     // {
     //   token: "WETH",
     //   address: "0x50c42dEAcD8Fc9773493ED674b675bE577f2634b",
-    //   oracle: "pyth",
+    //   oracle: "chainlink",
     // },
+    
     // {
     //   token: "wS",
     //   address: "0x039e2fB66102314Ce7b64Ce5Ce3E5183bc94aD38",
-    //   oracle: "pyth",
+    //   oracle: "chainlink",
     // },
     // {
     //   token: "USDCe",
     //   address: "0x29219dd400f2Bf60E5a23d13Be72B486D4038894",
-    //   oracle: "pyth",
+    //   oracle: "chainlink",
     // },
     // {
     //   token: "solvBTC",
     //   address: "0x541FD749419CA806a8bc7da8ac23D346f2dF8B77",
     //   oracle: "chainlink",
     // },
-    {
-      token: "scUSD",
-      address: "0xd3DCe716f3eF535C5Ff8d041c1A41C3bd89b97aE",
-      oracle: "pyth",
-    },
+    // {
+    //   token: "scUSD",
+    //   address: "0xd3DCe716f3eF535C5Ff8d041c1A41C3bd89b97aE",
+    //   oracle: "pyth",
+    // },
 
   ],
 };
