@@ -45,8 +45,11 @@
       "VToken_vPT-sw-wstkscUSD-1751241607_SpectraPTscUSDPool": "0xD1e8eC6EaeD325006731F816f41fd5483373A8f2",
       "VToken_vscUSD_SpectraPTscUSDPool": "0x7D47cBf5FE9cCF2F99D0C2E8a3c59FB3498bc21b",
       "VToken_vstS_Core": "0xe544e51bF20AB186B6b7b1A9095C8BC1E3f203f5",
-      "JumpRateModelV2_base0bps_slope1800bps_jump20000bps_kink6500bps": "0xB9544C7e4fb689Bd0DecC33DE352cf14302930c2"
-
+      "JumpRateModelV2_base0bps_slope1800bps_jump20000bps_kink6500bps": "0xB9544C7e4fb689Bd0DecC33DE352cf14302930c2",
+      "JumpRateModelV2_base100bps_slope850bps_jump25000bps_kink7000bps": "0xeaB0755A040BE5b707f80C29DF100a6a484dE316",
+      "JumpRateModelV2_base100bps_slope1000bps_jump35000bps_kink8000bps": "0x81CBDC9157316bac59dB3fC4D8Bb8127bb0102Fd",
+      "VToken_vscETH_Core": "0x04568dB12221D60C93e1db9Cb7933aD6b7c4280C",
+      "VToken_vscUSD_Core": "0x6770aF27FC5233A70B85BFf631061400a09d2e1c"
 
 
       
